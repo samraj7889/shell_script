@@ -1,0 +1,878 @@
+192.168.159.129
+192.168.159.128    https://meet.google.com/kiw-wgxj-fnf
+ 
+ Event ID: CRO-6780-DXJV
+
+
+variables
+ansible facts, custom facts        mainly used for installation
+filters ========to filer particular output from setup 
+loops using with_items==============with_itesm is used as a label to listen different item 
+nested loops========================a loop inside a loop is called nested loops
+register variable  and debug  =============== to register and to view the output we use debug module 
+ansible-vault
+gathering facts
+condition and loops ============= when condition
+when register debug msg findind file with stat
+handlers with notify  ============= if any chnaged made on the service, using notify we can execute particualr task. handler used with notify
+ansible task delegation=========== if a host does not exist on the host inventory that time we can use delegation. with delegation module use  (no example)
+fetch module=================used to collect date of file and store in managed node ansible given path.search for example
+block and resume ========is useful for error handling and when statement. block allows error handling combined with rescue and always.... used for patching 
+includes========can inculde tasks inside task using includes 
+tags====== using tags we can run only particular task in the play book. 
+ansible roles
+
+
+
+
+
+
+ansible used mostly in IT infrastructre domain.
+
+why ansible?
+
+free open source application.
+agent less(no additional package required to install on client server)
+yaml based
+highly flexiable
+large number of modules used to configuration
+simple and human readable
+
+
+advantage of ansible
+
+agent less architucture
+security
+simplicity
+
+ansible master nodes must be in linux,client node can be mac or windows 
+
+
+ansible architucture
+
+anisble install
+##ansible --version 
+## python version = 3.6.8 
+##config file = /etc/ansible/ansible.cfg
+
+ansible master and managed nodes
+[root@localhost sam]# pwd
+/home/sam
+[root@localhost sam]#
+
+[root@localhost sam]# ls=================================created ansible.cfg under my home directoty and {{invent}} is the host file for ansible
+ ansible.cfg  Desktop   Downloads  invent  
+
+
+[root@localhost sam]# cat ansible.cfg
+[defaults]
+inventory = invent==================host file name 
+remote_user = sam
+
+[privilege_escalation]
+become = true
+become_method = sudo
+become_user = root
+become_ask_pass = false
+#ansible_ssh_pass = root123
+[root@localhost sam]#
+
+ssh-keygen   ========== will create key on controller noder
+cd ~/.ssh/   ===========chnage directory
+ ssh-copy-id -i root@192.168.159.129========= will copy key to managed nodes
+ 
+ anisble ad-hoc commands
+ 
+ ansible web -i invent -m ping===========here 
+  ansible web -m command -a " id root"
+   ansible web -m yum -a "name=httpd state=absent"
+    ansible web -m shell -a "ps -ef | head"
+   only in shell module we can use | expression
+   time anisble_playbook yum.yaml   =================== time taken for ansible playbook complete will be displayed 
+   
+   ansible all -m fetch -a "src=/tmp/invent dest=/tmp"   ========== copy /tmp/invent file to your controller node under /tmp.
+   under tmp it will crrate src hostname or ip directory under the directory we can see the file 
+   
+   [root@localhost tmp]# pwd
+/tmp/192.168.159.129/tmp==============fetch example
+[root@localhost tmp]# ls
+
+ansible all -m setup -a "filter=ansible_distribution"
+
+ansible inventory
+
+groups of hosts
+we give all our managed hostname in our inventory files
+static and dynamic inventory
+static we create the inventory
+dynamic 
+
+[root@localhost sam]# ansible --list-host all===================to list all hosts in the inventory file 
+  hosts (1):
+    192.168.159.129
+[root@localhost sam]#
+
+
+  
+
+
+[root@localhost sam]# ansible-doc -l ============list all module
+[root@localhost sam]# ansible-doc ping=========list only particular module
+[root@localhost sam]# ansible all -m ping -vvv===============list ping output with most of the output
+
+ansible-playbook  copy.yaml --syntax-check================to check syntax of the yaml
+
+ansible web -m user -a "name=raj state=absent"
+ansible web -m command -a "cat /home/sam/invent"=========adhoc command
+ansible-doc -s yum===========display all examples 
+ansible web -m setup -a 'filter=ansible_all_ipv4_addresses'=========to filter particular variable in the facts
+# ansible web -m setup -a "filter=ansible_mem*"
+
+
+[root@localhost sam]# ansible all -m setup -a "filter=ansible_os_family"
+192.168.159.129 | SUCCESS => {
+    "ansible_facts": {
+        "ansible_os_family": "RedHat",
+
+
+
+ansible.cfg file
+
+[defaults]
+inventory = invent
+remote_user = sam
+
+[privilege_escalation]
+become = true
+become_method = sudo
+become_user = root
+become_ask_pass = false
+#ansible_ssh_pass = root123
+
+
+[root@localhost sam]# cat copy.yaml
+---
+- name: copy
+  hosts: all
+  tasks:
+    - name: copying file
+      copy:
+        src: /home/sam/invent
+        dest: /home/sam
+        owner: sam
+...
+
+
+---
+- name: installing httpd package
+  hosts: all
+  tasks:
+    - name: httpd
+      yum:
+        name=httpd state=present
+...
+[ec2-user@ip-172-31-44-158 ~]$ cat remove.yaml
+---
+- name: remove package
+  hosts: all
+  tasks:
+    - name: remove httpd
+      yum:
+        name=httpd state=absent
+...
+[ec2-user@ip-172-31-44-158 ~]$
+
+
+
+================================================
+
+---
+- name: ipp collection
+  hosts: all
+  gather_facts: true  ========================================gather_facts from setup it will gather required info
+  tasks:
+    - name:
+      debug:
+        msg: "{{ ansible_default_ipv4.address }}"
+...
+~
+
+
+TASK [debug] ************************************************************************************************************************************************
+ok: [192.168.159.129] => {
+    "msg": "192.168.159.129"
+}
+
+PLAY RECAP **************************************************************************************************************************************************
+192.168.159.129            : ok=2    change
+====================================================
+[root@localhost sam]# cat content.yaml
+---
+- name: www
+  hosts: all
+  tasks:
+    - name: www
+      copy:
+        content: "welcome sam how r u"
+        dest: /var/www/html/index.html
+        mode: 0444
+...
+[root@localhost sam]# curl http://192.168.159.129/
+welcome sam how r u[root@localhost sam]#
+
+
+======================
+
+[root@localhost sam]# cat service.yaml
+---
+- name: httpd install
+  hosts: web
+  tasks:
+    - name: install
+      yum:
+        name: httpd
+        state: latest
+
+- name: service
+  hosts: web
+  tasks:
+    - name: http
+      service:
+        name: httpd
+        state: started
+...
+
+
+in ansible every new version lots of changes made in module.
+some module can be removed some can be updated some will not support , we can find those option in metadata column 
+please refer google for more info 
+
+===============
+
+---
+- name: geturl
+  hosts: all
+  tasks:
+    - name: get url
+      get_url:
+        url: "http://mally.stanford.edu/~sr/computing/basic-unix.html"
+        dest: /home/sam/get
+        mode: 0777
+...
+
+
+=======================================================
+
+variables
+
+CREATING USER WITH PASSWORD
+FIRST USER OPENSSL TO GENERATE ENCRYPTED PASSWORD  
+TYPE OPENSSL PASSWORD THEN TYPE TEMP PASSWORD, HERE I TYPED ROOT123 AND GOT ENCRYPTED PASSWORD FOR IT AS JdKSZ93S7rJok
+
+[ec2-user@ip-172-31-44-158 ~]$ openssl passwd
+Password:
+Verifying - Password:
+JdKSZ93S7rJok
+
+---
+- name: creating user with password
+  hosts: all
+  tasks:
+    - name: user add
+      user:
+        name: user1
+        groups: wheel
+        password: JdKSZ93S7rJok
+...
+
+
+
+3 types  global, play scope, hostscope
+
+[root@localhost sam]# cat var.yaml
+---
+ - name: user add
+   hosts: web
+   vars:
+     user: ram
+   tasks:
+    - name: add user
+      user:
+       name: "{{ user }}"
+       uid: 7000
+       state: present
+
+ - name: ssh var
+   hosts: all
+   vars:
+     code: sshd
+   tasks:
+     - name: task
+       service:
+         name: "{{ code }}"
+         state: reloaded
+...
+
+
+
+
+---
+- name: group add
+  hosts: all
+  vars:
+    grp1: idm
+    grp2: dell
+  tasks:
+    - name: group add
+      group:
+        name: "{{ grp1 }}"
+        state: present
+    - name: group add
+      group:
+        name: "{{ grp2 }}"
+        state: present
+...
+
+
+---
+- name: variable
+  hosts: web
+  vars:
+    example: this file used to check variables
+  tasks:
+    - name: display variables
+      debug:
+        msg: "{{ example }}"
+...
+
+TASK [display variables] ************************************************************************************************************************************
+ok: [192.168.159.129] => {
+    "msg": "this file used to check variables"
+}
+
+[root@localhost sam]# cat var3.yaml========================using multiple variables under var
+---
+- name: variable
+  hosts: web
+  vars:
+    dic:
+      dict: multi variables
+  tasks:
+    - name: multi variables
+      debug:
+        msg: "{{ dic }}"
+    - name: multi vars
+      debug:
+        msg: "{{ dic ['dict'] }}"
+...
+
+
+TASK [multi variables] **************************************************************************************************************************************
+ok: [192.168.159.129] => {
+    "msg": {
+        "dict": "multi variables"
+    }
+}
+
+TASK [multi vars] *******************************************************************************************************************************************
+ok: [192.168.159.129] => {
+    "msg": "multi variables"
+	
+	---
+- name: number include
+  hosts: web
+  vars:
+    colours:
+      - red
+      - blue
+      - green
+      - orange
+  tasks:
+    - name: multi number
+      debug:
+        msg: "{{ colours }}"
+    - name: colour 1
+      debug:
+        msg: "{{ colours[0] }}"
+    - name: colour2
+      debug:
+        msg: "{{ colours[1] }}"
+    - name: colocur
+      debug:
+        msg: "{{ colours[2] }}"
+...
+
+
+TASK [multi number] *****************************************************************************************************************************************
+ok: [192.168.159.129] => {
+    "msg": [
+        "red",
+        "blue",
+        "green",
+        "orange"
+    ]
+}
+
+TASK [colour 1] *********************************************************************************************************************************************
+ok: [192.168.159.129] => {
+    "msg": "red"
+}
+
+TASK [colour2] **********************************************************************************************************************************************
+ok: [192.168.159.129] => {
+    "msg": "blue"
+}
+
+TASK [colocur] **********************************************************************************************************************************************
+ok: [192.168.159.129] => {
+    "msg": "green"
+===================================================================
+
+=============================================
+
+---
+- name: user and group
+  hosts: all
+  vars:
+    u1: s1
+    u2: s2
+    g1: lnt
+    g2: lnt2
+  tasks:
+    - name: adding group
+      group:
+        name: "{{ g1 }}"
+        state: present
+    - name: adding group
+      group:
+        name: "{{ g2 }}"
+        state: present
+    - name: adding user
+      user:
+        name: "{{ u1 }}"
+        group: "{{ g1 }}"
+    - name: adding user
+      user:
+        name: "{{ u2 }}"
+        group: "{{ g2 }}"
+...
+[root@localhost yamlfiles]#
+
+==============================================
+
+[root@localhost home]# cat user.yaml
+group:
+  - db
+  - db1
+  - db3
+user:
+  - j1
+  - j2
+  - j3
+[root@localhost home]#
+
+---
+- name: file variable
+  hosts: all
+  vars_files: /home/user.yaml
+  tasks:
+    - name:
+      group:
+        name: "{{ item }}"
+        state: present
+      loop: "{{ group }}"
+    - name:
+      user:
+        name: "{{ item }}"
+        state: present
+      loop: "{{ user }}"
+...
+
+
+[root@localhost home]# cat touch.yaml
+package:
+  - httpd
+  - sshd
+url:
+  - man
+  - can
+[root@localhost home]#
+
+
+[root@localhost sam]# cat pak.yaml
+---
+- name: file vars
+  hosts: all
+  vars_files: /home/touch.yaml
+  tasks:
+    - name: package updated
+      service:
+        name: "{{ item }}"
+        state: started
+      loop: "{{ package }}"
+    - name: groupadd
+      group:
+        name: "{{ item }}"
+        state: absent
+      loop: "{{ url }}"
+...
+[root@localhost sam]#
+====================================
+
+register
+
+---
+- name: reg
+  hosts: web
+  tasks:
+    - name: add user
+      user:
+        name: yum
+        state: present
+      register: output
+    - debug: var=output
+...
+====================================================================
+
+ ansible-vault encrypt pkg.yaml======encrypt the file
+ ansible-vault decrypt pkg.yaml========decrypt the file 
+ ansible-vault create vault_test.yml====to create file with encrypt
+ ansible-vault view user_creds.yml==========to view encrypted file
+ 
+ vault $ ansible-vault edit user_creds.yml==========to edit encrypt file
+
+vault $ ansible-playbook -i myinventory user_creds.yml --ask-vault-pass -kK==================to run encrypt file with password
+
+vault $ ansible-playbook -i myinventory user_creds.yml --vault-password-file /home/ansible_user/.ansible_vault_pass =====to run play book without asking password, we have password stored file mentioned in the command
+in .ansible_vault_pass enter only password
+
+vault $ ansible-vault rekey user_creds.yml==============to chnage ansible vault password
+
+vault $ ansible-vault encrypt_string 'Alice@124!' --name 'alice_sso'============to encrypt specific variable in the file 
+
+
+========================================================
+
+[root@localhost sam]# cat pkg.yaml
+---
+- name: debug
+  hosts: web
+  gather_facts: no   =======================gathering facts no
+  vars:
+    name: httpd
+  tasks:
+    - name: output
+      service:
+        name: "{{ name }}"
+        state: stopped
+#      register: output
+#    - debug: var=output
+...
+[root@localhost sam]#
+
+
+---
+- name: loop checking
+  hosts: all
+  tasks:
+    - name: loop checking
+      user:
+        name: "{{ item }}"
+        state: absent
+      loop:
+        - t1
+        - t2
+      register: output
+    - debug: var=output
+...
+[root@localhost sam]#
+
+
+LOOP concept 
+in the loop we can use variables and the variables named as ITEM in the task
+---
+- name: user and group creating
+  hosts: all
+  tasks:
+    - name: loop2
+      yum:
+        name: "{{ item }}"
+        state: latest
+      loop:
+        - postfix
+...
+
+---
+- name: loop
+  hosts: all
+  tasks:
+    - name: lopp3
+      shell: "echo number {{ item }}"
+      loop:
+        - one
+        - two
+      register: result
+    - debug: var=result
+...
+
+[root@localhost sam]# cat cmd.yaml
+---
+- name: cmd
+  hosts: all
+  tasks:
+    - name: cmd
+      command: "cat /home/yum/1"
+      register: ot  ================= register collect out put of the command and store it in "ot" the name we given
+    - debug: var=ot=========and execute the output AS shown below
+...
+[root@localhost sam]#
+
+
+TASK [debug] ************************************************************************************************************************************************
+ok: [192.168.159.129] => {
+    "ot": {
+        "changed": true,
+        "cmd": [
+            "cat",
+            "/home/yum/1"
+        ],
+        "delta": "0:00:00.003671",
+        "end": "2021-02-23 00:59:43.853622",
+        "failed": false,
+        "rc": 0,
+        "start": "2021-02-23 00:59:43.849951",
+        "stderr": "",
+        "stderr_lines": [],
+        "stdout": "wbfgiufbcfikfbkbj", =============== out put of the file
+        "stdout_lines": [
+            "wbfgiufbcfikfbkbj"
+        ]
+
+=============================
+
+WHEN condition 
+
+equal on strings          ansible_machine == "x86_64"
+equal to numerical        max_memory == 1024
+less than                 min_memory < 256
+greater than              max_memory > 2046
+less then /equal to       min_memory <= 256
+greater then / equal      max_memory => 2046
+not equal to              min_memory != 256
+variable exists           myvar is defined
+variable is boolen true   myvar
+
+
+---
+- name: when
+  hosts: all
+  vars:
+    start: true   ========================== when condition true
+  tasks:
+    - name: when {{ start }}
+      yum:
+        name: httpd
+      when: start
+...
+
+
+[root@localhost sam]# cat when2.yaml
+---
+- name:
+  hosts: all
+  vars:
+    pkg: firewalld
+  tasks:
+    - name: installed {{ pkg }}
+      yum:
+        name: "{{ pkg }}"
+      when: pkg is defined  =======================when using variable exist
+[root@localhost sam]#
+
+
+---
+- name: when condition
+  hosts: all
+  tasks:
+    - name: when
+      user:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - rohan
+        - kowsi
+      when: ansible_bios_version == "6.00"
+      register: ot
+    - debug: var=ot
+...
+
+when: ansible_bios_version == "6.00" and ansible_architecture == "x86_64"          both the condition should meet
+when: ansible_bios_version == "6.00" or ansible_architecture == "x86_64"           either one of the condition should meet
+
+====================
+
+---
+- name: file checking
+  hosts: web
+  tasks:
+    - name: file checking
+      stat:
+        path: "/home/sam/dir"
+      register: file
+
+    - name: debug
+      debug:
+        msg: "file does not exist"
+      when: file.stat.exists  == false
+...
+
+[root@localhost ~]# cat stat1.yaml
+---
+- name: file checking
+  hosts: all
+  tasks:
+    - name: file and directoy checking
+      stat:
+        path: /etc/resolv1.conf
+      register: etc
+    - name: debug
+      debug:
+        msg: "file does not  exist"
+      when: etc.stat.exists == false   ===================using when condition 
+
+    - name: file
+      stat:
+        path: /etc/resolv.conf
+      register: file2
+    - name: debug
+      debug:
+        msg: "file exist"
+      when: file2.stat.exists == true
+...
+[root@localhost ~]#
+
+=========================================================================
+
+Ansible handlers are very useful in the scenarios where we need to run some task when a change takes place on the remote node
+For example we want to restart or reload a service immediately after a change has been made to its configuration file.
+Handlers must have a unique name globally. The tasks which requires to run handler contains notify directive. If nothing notifies a handler, it will not run.
+Handlers are mostly used when we need to restart services or trigger reboots.
+
+
+---
+- name: handlers
+  hosts: all
+  tasks:
+    - name: service
+      yum:
+        name: firewalld
+        state: latest
+      notify: restart_ssh
+  handlers:
+    - name: restart_ssh
+      service:
+        name: sshd
+        state: reloaded
+...
+
+[root@localhost ~]# cat hand2.yaml
+---
+- name: handlers
+  hosts: all
+  tasks:
+    - name: service
+      yum:
+        name: firewalld
+        state: present
+      notify: restart_ssh
+  handlers:
+    - name: restart_ssh
+      user:
+        name: ty1
+        state: absent
+
+=================================================================================
+[root@localhost sam]# cat fetch.yaml
+---
+- name: fetch
+  hosts: all
+  tasks:
+    - name: fetch
+      fetch:
+        src: /home/sam/invent
+        dest: /tmp/test
+...
+[root@localhost sam]#
+
+==============================================
+
+[root@localhost sam]# cat inclu.yaml
+---
+- include: inclu1.yaml
+- name: include
+  hosts: all
+  tasks:
+    - name: debug
+      debug:
+        msg: include with include
+...
+[root@localhost sam]# cat inclu1.yaml
+---
+- name: include
+  hosts: all
+  tasks:
+    - name: include
+      user:
+        name: sir
+        state: present
+...
+
+[root@localhost sam]#
+
+
+=======================
+
+using tags we can run particular task on the playbook which will reduce our running time.
+using --skip-tags=user     skip we can skip the particular task and can run remainign 
+
+ansible-playbook tags.yaml --tags=yum
+ansible-playbook tags.yaml --tags=yum,user
+
+[root@localhost sam]# cat tags.yaml
+---
+- name: hello
+  hosts: all
+  tasks:
+    - name: tags
+      user:
+        name: hello
+        state: present
+      tags:
+        - user
+    - name: tags2
+      yum:
+        name: firewalld
+        state: removed
+      tags:
+        - yum
+...
+
+===============================================================
+ ansible-doc -l
+ansible-doc yum
+ANSIBLE_KEEP_REMOTE_FILES=1 ansible -m shell "id ec2-user"
+   75   ANSIBLE_KEEP_REMOTE_FILES=1 ansible all -m shell "id root"
+ ansible -m copy -a "src=/home/ec2-user/hosts dest=/tmp" all
+
+  108  ansible -m copy -a "content='add host' dest=/tmp/hosts" all
+
+  111  ansible -m copy -a "content='add host3' dest=/tmp/hosts backup=yes" all
+  ansible all -m fetch -a "src=/tmp/touch1 dest=/tmp/{{inventory_hostname}}file"
+  ansible -m yum -a "name=httpd state=latest" all -b  ================================in adhoc command to become root user sudo we use -b 
+
+  
+
+
+
+
+

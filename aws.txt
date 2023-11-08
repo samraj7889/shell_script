@@ -1,0 +1,413 @@
+AWS=== amazon web service provided by amazon
+a cloud computing platform
+uses distributed infrastructure   ( distrubuted infrastructure means hardware component will be in different area and all connected together by network)
+large number of backend servers work together to provide aws server using network.
+
+aws provide various IT resource such as 
+	iaas   infrastructure as a service  ( provide service related to hardware)
+	paas   platform as a service ( provide service related to software development tools)
+	saas   software as a service (a particular full fledge software provided used by a company)
+	
+	CLOUD MEANS NETWORK OR INTERNET
+	COMPUTING: USES REMOTE SERVER FOR STORING ALL THE FILES INSTEAD OF LOCAL DEVICE
+	
+	 why going to cloud computing
+	 
+	 cost maintaines
+	 need database server mail servers switces networking for IT infrastructure   cloud computing will reduce all this
+	 no need of maintaines engineer
+	 
+	 characterstics of cloud
+	    agility  ( surusurupu active)
+		availability and reliabality 
+		multiple sharing
+		maintaines cost is low
+		pay for usage
+		on demand service (when we need we get server as service)
+		
+TYPES OF CLOUD 
+   PUBLIC CLOUD  PRIVATE CLOUD   HYBRID CLOUD  	COMMUNITY CLOUD
+
+public cloud:
+   it is open to all the users. user can access the cloud and pay for their usage.
+   amazon maintance all the process, it is fliexiable. low cost, low security level.
+   
+private cloud:   
+   internal or corporate cloud.
+   have high security
+   have access only to the corporate who own the cloud setup.
+   high speed and high perforamce becos of less useage of cloud
+   have limited access
+   only access to the particular area
+   
+hybrid cloud:   
+   combination of private and public cloud.
+   critical and most important jobs are done using private cloud and non critical jobs are done by public cloud
+   it is fliexible due to public cloud and more secured due to private cloud
+   
+communnity cloud   
+   organization have cloud and share with the members of the community
+   services can be access only by the particular community
+   cloud is owned and managed by one of the organization of the community or  by the third party 
+   cost is more then private cloud  hight security level
+   
+ CLOUD SERVICE MODELS
+       IAAS PAAS SAAS
+
+IAAS infrastruce as a service
+  infrastruce as service like hardware
+  reduce cost of buying phyiscal servers 
+  managed by the service provider and not by us 
+  no data loss 
+  can be accessed by GUI and API (software) 
+
+PAAS  platform as a service [========    development tool
+   the platform needed for the programmer  to develop run test their own application can be accessed
+   if we own PAAS, IAAS will come with this.
+   for software developer, they just need to implemet there code on the server remainaig all will be provided by the service
+   support multiple 	languages and frame work
+   developed easy for software developer to use, 
+   in aws it is provided as aws elastic beanstalk
+   
+SAAS  software as a service
+   comes with licensed software on subscribiton basics
+   web software and apps needed to performe are provided on pay usage
+   user no need to worry about app update
+   
+   
+   
+                        AWS AMAZON web service is a cloud platform
+
+services offered by aws 
+    all servies are used, pay per usage
+         computing            ===================basic hardware requirement
+         networking           ================== network switch routres
+         database             =================== data storeage can be used to store day, no data loss will happen and data backup will bbe provided
+         programming models    ===============bigdata processing models can be given using this models(just for example we can have more models)
+         develpment platform	=============for software develpment, all the tools will be provided, multi language 
+
+
+2006 it is offical launcehed AWS
+
+
+
+GLOBAL infrastruce
+
+   		 region--------availability zone ----------- it is a data center setup , have firewall, storage,, backup, all service will be in this zone
+		 
+		 
+
+IAM
+
+components of IAM
+   users groups roles policies 
+   
+   users ==using iam once we created the user need to give admin access and going further need to login as the user account we created(having admin access.
+   once we created user account(while creating user account in IAM in the second page go down we see admin groups,click that) we get url on top after created the user, using that url only we need to login.
+   user account with admin permission is different, and root account is different. 
+   
+   
+   
+   groups::::: we need to create group and we need to select the permission for the group :::ex  only to access s3 or creating ec2 instance./
+   later creating new user, while creating we have option to join user to the group. if we have user to the group that user will have only s3 or ec2 access, apart from that if he try to access any thing he get warning message 
+   
+   ROLES:::
+     similar to user but assigned to applciation.
+	 we have ec2 instance web application and it need to intreact with s3 
+	 creat role in IAM and click roles and attach this roles to that particukar ec2 instance.
+	 create role in IAM click create new role we have more roles, for ex select ec2 instance and select policy we select s3 access
+	 then go to instance click action on the instance,  click instance setting select add/replace roles in iAM role we have created role and select.
+	 
+	 
+	 POLICIES:::
+	  to assign permission to a user or group role or resource we create policy,created using iam roles policy
+	  we can create roles like allow or deny for particlar user or groups and assign this policy to the users or groups.
+	  once policy applied user or groups memebrs acnt access the resource as per our policy created.
+	  
+	  
+	  giving multifactor authentication.
+	  
+	  click users, in users security credential in down we can see asssigned mfa no 
+
+identity and access managemant
+    it wont give all permission to all user to all the servers    
+	limited permission to limited user on limited services
+	for exam admin access given only to admin group users   high secured
+	identity fedreation=======   
+	multifactor authentication==============
+	payment card security
+	free to use====== no need to pay separately for this 
+	once we left the organisation we cant access the service, which is controlled by IAM
+	
+	
+SAML	
+  security assertion markup language
+  authentication provided by identity provider.
+  single sign on 
+  
+  messages passed from identity provided to service provider
+   who logged in when logged in on which methode user logged in 
+   attribute, who looged in and from which department logged in 
+   authorization decision:  who can access the service, permission of the users 
+   
+   
+   user--------service provider---------identity provider
+   
+   once user try to access the service, service provider request single sign on to identity provider
+   identity provider check user identification and respond with xhtml document of user info.
+   and send to service provider 
+   
+IAM IDENTITIES
+
+uses of IAM 
+
+iam root users 
+   basic users are called iam root users. managing all the accounts, unrestricted access can access all the resource,biling is done by this user
+iam user
+   normal user, permission need to be given(limited permission) 
+iam group
+   collection og users,
+   adding user to the groups and the permission will be same which is given to the group.
+   easy to manage permision of the user
+   
+   
+ROLES of IAM::::::
+ iam roles 
+      set of permission to grant acccess and action to the resources that is assosiated with the roles.
+      for exam to off or on particlar resource or service the access is not given to user, it is given to roles and user who all playing the roles will have access
+      temporary security credentials	  
+  
+who can access this roles
+    iam user ( normal user)
+    application and service
+    federated users (outside users)  can allot a particulae time on that time outside user can access
+way to use roles::::
+    IAM console,   
+        for example normal user (iam user) will have set a default limitted permission, when they requested to play roles, they default permission will get removed and only roles access given. once there roles work done they will released from the roles and default permissin will be given back.
+
+===================================================================================================================
+
+   STORGAE
+
+amazon s3
+ simple storage device or service so it is called s3
+ object based storage 
+ bucket of unlimited size first we need to create bucket then files are stored in it. people who creat the bucket is th eowner.he cant transfer his ownlership
+ maximun size 5 tp bucket
+ it is cloud so we can access from any where
+ we can give upload and download permission .
+ untill we give permission no one can view this
+ in the bucket have dns name 
+ 
+ S3
+   region we can chose geographical, to have fast access.
+   data consistency:
+      
+
+object contain:
+ keys
+ value
+ access permission
+ metadata
+ version
+ subresource
+
+  https://image.s3.amazon.com/pic23.jpg
+ here image is the bucket name and pic23 is the keys
+
+
+s3 storage classes
+
+s3 standars::::::::::::::::::::
+    while we stored data in this class, it will store in three  places.so no data loss will happene
+	no delay time and efficiency. can use fastly.. if we did int mention any storgae class by default it will be s3 standarad
+	
+s3 standard infrequent access;;;;;;;;;;
+   data which is not used frequently can be stored in this class
+   data should be min 128 kb
+   fast access of data
+   mininum amount is charged 
+   no data loss
+ 
+ 
+ s3 zone infrequent access:::;;;;;;;;;;;;;
+     data which is not used frequently can be stored in this class
+	 single availabilty storgae, so will have data loss
+	 data should be min 128 kb
+	 minimun amount is charged
+	 
+s3 glacier:::::::::::::::::::;
+     cheapest storgae 
+     data can be stored which is not used for so long
+     retrival time is more
+     no data loss
+	 minimum amount is charged
+     	 
+==================================================================================================
+
+amazon EC2   elastic compute cloud 
+
+
+   provide computing hardware devide to run a program 
+   to runa program we need cpu memory ram storage, all this are provided by ec2 
+   provide virtual server insttanlly 
+   going to pay whenwe use and we can release the service when it is not used and we r not going to pay for it
+   
+   instance machine wat we require:
+      cpu,memory,networking,capacity.
+   AMI   ( software configration, os, application)    =====while getting instance(server) first we chose os linux or windows
+   storage volume======= to store data we need storage
+   tags=========if we have multiple instance(server) calling all the server separately is hard. to call all the server(instance) at once we use tags
+   vpc =========virtual private cloud  
+   from AMI we lanuch the instance===========ami will be present in the root device.
+   stop and terminate instance 
+      
+
+using AMI only we can call our instance(server).
+first we request on AMI
+
+
+PRICING OPTION OF EC2::::::::::
+
+    on demand  
+	   pay per hour or second
+	   low cost and fliexible
+	   requirement not known=( when we are not sure on how much time we use the instance then we can go with pay per hour)
+	   
+	   
+	reserverd
+      contract with amazon===( booking instance for 3 years(for example)
+       predictable usage==========we know how long we use the instance 
+          3 types   standard reserverd instance 75% discount
+                    convertible reserverd instace 54 % discount( if we r not using the instance we can conver or exchange with differebt instance )
+                    scheduled reserverd ======for short term usage we use this
+    
+    spot instance:
+        bid for a price ===== yelathuku yedukurathu pola 
+
+    dedicated instance:
+        phsyical server with ec2 instance capacity ( in this we can use our own software licience)
+        70% discount on reservation
+
+
+================================================================================================================
+
+
+AMI    amazon machine language   
+
+   software configuration 
+    types:
+      instance store  
+          temporary storage  =========once we stop the instance data will get lost
+          boot time less then 5 min
+		  no stop operation=====so we need to termiante untill we terminate we need to pay 
+		  data loss during failure
+		  
+	  EBS BACKED instance ( elastic block store)
+          no data loss 
+          permanenet storgae==== data will be available even if we delete the instance but we need to pay for it
+          boot time  is less then 1 min 
+          stop option permitted 
+          can recover from failure
+          we can chnage instance based at any time, like chnaging kernel, storgae volume, but instance need to be stopped that time
+          will be charged only for run time and not for stopped hours	
+     EBS volume types  
+        ssd backed volumes=======depends on I/O we chose the volume, used for hign i/o operation 
+		     general purpose ssd
+			 provisioned ssd
+        hhd backed volumes 	
+            cold hdd
+            magentic volume
+
+
+=======================================================
+
+LAMBDA
+   
+   
+   till now for to run our code or program  we need instance, and we should know wat cpu network storage application required to run the code
+   to over come this issue we use LAMBDA, once we upload the code in amazon, LAMBDA will do every thing. it will allot cpu network storage application.
+   even if more cpu storage required it will automaticallly allot.
+   
+   no need to worry about IAAS PAAS
+   
+   used in 2 ways
+       http request using amazon api calls
+	   event driven compute service
+		  
+		  
+		  click lambda----click create function---give lamdba function name-----selet code below the function name given ---------seletct permission
+		  (we have chose or create)-----then click create function------we get notification in the next page (fucntion code create successfully)---
+		  add trigger---select trigger configuration----in the lamda fucntion tab we can see our created code 
+ 		  
+ how to launch and create instance 
+
+      click EC2--------click launch instance( in the page below------we will redirect to ami page(where all instanc are located---left side we can see free tire(free instance) will get all free machine--- based on your requirement selet the machine-----next page choose an instance type----
+	  we can see sysment cpus network memory storgae, based on our reqirement we can select--configure instance details(number of instance we need,
+	  purchasing option( if we quote the price we can get discount) network can create new vpc, i am role can be nominated,shutdown behaviour, procet againt accidental termination---  next storgae , root type where located and volume type depens on I/O of the system---next tags  to mention tags for the instance and deparatment code---- nextconfigure security group ,selet group and type of network to reach instance----
+	  review and lanuch we see all our selection from the begining, if we need any changes we can chnage.,,,, selet magnetci if for our own use, but based on project requierment we need to selet, already we seleted this but to conform it will ask.---- once we launch selet create a new key pai and give name as of our won and download the key pair then click launch instance, go down to the page and click view instance---
+	  now our instance will be created.
+	  
+	  
+	  how to use the launced INSTANCE
+	  
+	       to terminate our instance first go to ---action--instance setting--chnage termination policy--- disbale it if it in is enable state we cant terminate our instance---
+		   
+		   download putty and putty gen, in download we can see putty and putty gen
+		   in the begining while installaing instance we genetare public key and it get stored in our system with the name extention .pem(as it is mandatory to use our instance)
+		   putty is used to connect instance and putty gen used to convert .pem file into .ppk file, direcily we cant use the .pem file to conncet so to convert this we need putty gen.
+		   open putty gen  click load it will take other pages of our windwos drive in the bottom chnage putty private key .ppk to all files. chose the key which we created for instance and click  and and chnage from putty private keys to all file in the dialouge box.
+		   selet .pem file and click save private key it will gnetare a key save with the name extension as eckey.ppk (eckey just i gave)
+		   
+		   go to the instance and in the instance down page we can see public IP ipv4 copu ec2-user@34.224.41.244 and open putty save the ec2-user@3.90.84.47  and open ssh in the putty option and clieck auth and click browse select .ppk file which we stored noneed to open, go to session and give ec2-user@34.224.41.244 and click save and click open 
+		   use ec2-user for the first logginonce logged in using sudo su - to root and set root password.
+		   
+		   got server server refused our key putty aws ec2 while installing the machine
+		   used to connect using hostname ec2-38-239-22-12.us-east-2.compute.amazonaws.com(Public IPv4 DNS) with a saved section in putty
+		   =======================================================================================
+		   
+		   
+		   IAM managemanet
+		   
+		   click IAM  ---click users and add users depend upon the user need we selet AWS Management Console access or Programmatic access , user acn able to chnag ethe paasword or not and  auto genretate password for user opion will be there and click next permission---set permission tab--- we have add user to the group(if we already have group we can or else we need to create or copy permission from the user or attach already exist policies =====click tags here we give user info like mail department(but it is optional)====next preview it iwll show all the inof wat we filed from the begining and click next we see user account.
+		   
+		   user account is not part of any groups 
+		   
+		   now creating group 
+		   
+		   go to iam click groups and click create new group=== group name 
+		   
+		   
+		   roles::::
+		   
+		      click roles--click create roles---Select type of trusted entity   we have aws service,another aws user,web identity,saml  then selet Choose a use case, no we selet ec2 --------Attach permissions policies, to which we need to give access we need to selet, we have more policy, -----next tags  IAM tags are key-value pairs you can add to your role. Tags can include user information, such as an email address, or can be descriptive, such as a job title. You can use the tags to organize, track, or control access for this role-----Review give role name 
+			  
+			  
+			  
+			 ==================================================================================================================
+			 
+			 storgae s3 service 
+			 
+			 select storage s3 ====we get page to create bucket(means folder) click create bucket-----Bucket name(should be unique),select AWS Region===== select correct regio for easy access of the creating bucket, our region asia pacific mumbai, come down Bucket Versioning===
+			 if we enable versiooning our previous file will be present, if we uplod new same file, we get two files(old and new one)
+			 if we forget to give public or private version, after creating the bucket we can chnage using permission option.
+		   
+		   
+		   Amazon S3==============we use this life cycle option to move not frequently used data to cheapest data, becos to cost minimize. storage provided by aws is costly depend on teh requirment
+lalala678===========bucket i created
+management
+Lifecycle configuration
+Create lifecycle rule   ---standard IA is the cheapest storage we select 30 days. glacier is too cheapest storgae after 60 days if we are not using the data==but reviewing the file  will take more time.
+		   
+	 
+	 
+     
+
+ 
+    	
+   
+   
+    
+ 
+   		 
+   

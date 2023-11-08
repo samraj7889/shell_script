@@ -1,0 +1,109 @@
+types of instances 
+  general purpose instance 
+  compute instance=======application that requires a lot of processing from the cpu 
+  memory instance=== application that are heavy in nature require lot of ram
+  storgae instance====application that have more data that requires more space
+  gpu instance======applciation that requies heavy grapic rendring
+  
+  
+  
+elastic beanstalk
+   AWS Elastic Beanstalk is an easy-to-use service for deploying and scaling web applications and services developed with Java, . NET, PHP, Node. js, Python, Ruby, Go, and Docker on familiar servers such as Apache, Nginx, Passenger, and IIS.
+   AWS Elastic Beanstalk is the fastest and simplest way to get web applications up and running on AWS. Developers simply upload their application code and the service automatically handles all the details such as resource provisioning, load balancing, auto-scaling, and monitoring.
+   Elastic Beanstalk is one layer of abstraction away from the EC2 layer. Elastic Beanstalk will setup an "environment" for you that can contain a number of EC2 instances, an optional database, as well as a few other AWS components such as a Elastic Load Balancer, Auto-Scaling Group, Security Group.   
+   
+   
+   in services click elastic beamstalk----give application name, select platform we have multiple platform---once done we can see our created application in application tab---click our created application and click create new environemt---we have web server env and worker env----give domain name and check availabilty,select platform remainig will be selected automatically or if we have sample code with us we can uplod the code and can use it---
+   
+   
+NETWORK services:::
+   3 types : vpc route53 cloud front
+   
+   vpc vitual private cloud
+     in aws if we configure all the server with same VPC, then it will be visible to each and every server in the vpc
+	 if we have privtae network that can be connected with aws using vpc.adding th enetwork in it
+	 
+   direct connect:::::
+     direct connect is a leased line using which you can directly connect to the aws infrastructre.
+
+   route 53
+     is a domain name system
+     it will redircet the url to route 53 and then from route 53 to compute
+
+
+AWS cloudfront:::::::::::;;
+   if u r in india and ur requsted server is in australia, the requesting time will be more and we receive late response, to over come this issue we have cloud front in middle of server and the user (user<----->cloudfront<------->server)
+
+  edge location
+   (user<----->edge location<-----> server in europe) due to different region user requesting server delivers late response, edge location which is in our region location collect infromation from the  europe server and stores in it and delivers to us .  
+   
+   in services search cloudfront
+   
+   we need to create distruibution and to use it
+    click creat distruibution---click get started----giving bucked path it will have url also to the bucket---restrict bucket access---create new udentity----giving permission---how to access the data http and https -----then in last create distrubution.
+	10 to 20 min i tilll take time to create distrubution
+	in the created distrubution we can see domain name copy that doman name na serch in url, with the domain name add /index.html in the last thenwe can getthe data with out error.
+	
+	=================================================================================
+	
+	monitoring and managemant
+	  cloud formation cloud watch load balancer
+	  
+aws cloud watch:::
+   to reduce cost effective:: ex  if the server is not in use bu cloud watch monitoring we can view and stop the server 
+   to check is the server is down::: for ex if server running for flipkart should not be down, to monitor this 
+   mark end user experience and create report  which helps to make improvement
+   collects montioring logs and stores it
+     concepts of clodwatch 
+        metrics
+        dimension
+        statics
+        alaram	
+
+configure of cloudwatch
+    
+    search simple notification service---can create topic----click on the topic we created---click on the action and click subscribe to topic---
+    we can chose email---and click ceate subscription
+
+now search cloudwatch in service and click on---here we can see alaram for our scheduled and now we use metric here so click metric--selet ec2 and cick per instance metric---if we need to configure for partickuuelar selet that configuration for example cpu
+here we are setting cpu utilization if it comes belowe 25 % can set alaram and mail notification sent to mail id whihc we configured in simple notification service.
+
+
+====================================================================================
+
+auto scaling and load balancer
+
+   creating AMI images
+    click on the server and go to action-- go to image--- and click create image---give image name---we can see this image under image,amis----
+   
+why autoscaling needed
+    if we have 2 servers and only 300 user can use at the same time for easy access but if we have more then 300 users server response will be slowed to over come this autoscaling is used
+
+creating auto scalling
+    first  click launch configuration---click create launch configuration----click my amis( where already we created images and stored)----select the created images here----select the server and give name for it-----click next to storage---click configure security groups----we can add http and click review-----and click create launch congiration----we can seleet key pair if we have if not we need to create==-====we get create an auto scaling using this lauch configuration
+	
+	give group name-network should be default, select subnet minimum 2 subet---after this simple congiration part once we are done,
+	we can see new instance in our ec2 with same configuration on the server which we created 
+	
+	
+	
+load balancer
+
+    user<------>  load balancer <------> auto scalling
+     
+types of load balancer
+   classic --------------early it is used now one one is using this========if we have 5 years it will share equally
+   application ========= depend upon the workload it iwll share no we use application
+   
+   to conficure search load balancer in services
+    click on load balancer---click create load balancer---we can see 2 option application and classic select application----give name, scheme internet facing,2 availabilty zone----next configure security setting-----create new ----add rule http---configure roiting target groups---reviw and create
+	
+	create target group and this trargeting groups should point to auto scaling groups 
+	to make this pointing go to auto scalling groups select any of the auto scaling ---go below th epage to edit we can see target groups ad dthe select the name of the groups. now this is connected to load balancer
+	
+	to validate go to load balancer click ur load balancer  and go down and click listerns----click view edit rules under ruleswe can see if else then structure----
+	
+	   
+	
+	
+  	

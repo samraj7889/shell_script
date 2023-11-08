@@ -1,0 +1,422 @@
+WHAT is docker and what is the use case'
+docker image
+docker container
+installing docker 
+docker client and server 
+really what is container
+docker run command
+REMOVING CONTAINERS
+retrviewing logs from container 
+
+
+developer design an software and test on his laptop, then it sends to testing team, they test this on his laptop, finally it go to production team, and he test this on his laptop. 
+
+due to different computer hardware componets,software may get failed on one of the place
+
+DOCKER COMPONENETS:::::::::::::;
+docker client docker server + docker images + docker container + docker registry
+
+docker client----build push run   docker client accessed from the terminal
+docker server----consist of docker host
+docker registry---contains images
+docker host----runs docker image and docker regitry
+
+
+
+
+
+DOCKER IMAGES ARE TEMPLATE WITH INSTRUCTION WHICH IS USED TO CREATE CONTAINER
+DOCKER IMAGE IS BUILT USING A FILE CALLED DOCKER FILE
+DOCKER IMAGES ARE STORED IN DOCKER HUB OR IN REPOSITORY
+DOCKER CONTAINER IS A STAND ALONE EXECUTABLE SOFTWARE PACKAGES WHICH INCLUDES APPLICATIONA AND THERE DEPENDEDNCY 
+DOCKER REGISTORY IS AN OPEN SOURCE SERVER SIDE SERVICE USED FOR HOSTING AND DITRUBUTING IMAGES 
+DOCKER IMAGE IS COMPRASIED ON MUTIPLE LAYER BUT BY DEFAULT START WITH BASE LAYER
+
+
+DOCKER REGISTRY::::::::
+   IT IS SERVICE TO HOST AND DISTRUBUTE DOCKER IMAGES AMONG USERS
+  REPOSITORY IS A COLLECTION OF DOCKER IMAGES 
+DOCKER REGISTORY HAVE PUBLIC AND PRIVATE REPOSITORIES
+IN REGISTRY PUSH AND PULL COMMAND ARE USED TO INTERACT WITH DOCKER IMAGES
+PULL COMMAND WILL PULL IMAGES FROM DOCKER REGISTRY AND PUSH COMMAND PUSH IMAGES TO DOCKER REGITRY.
+
+DOCKER COMPOSE IS USED FOR RUNNING MULTIPLE CONTAINER AS SINGLE SERVICE IT IS IN YAML FORMAT  
+
+
+DOCKER FILE::::::::::::::::::::::::::;
+  text file with list of steps to create a image
+IMAGES::::::::::::;
+   template for creating environment
+CONTAINER::::::::::::::
+    running instance of the images
+
+dockerfile------->image------->container
+           build	    run
+
+
+DOCKER AND ITS USE
+   while installing any application in our system, we face package missing error or dependency missing error, we will trouble shoot those error and again we try to install the software, but again we may get some other error while installing.
+   to over come this issue doxker is used
+   docker makes it really easy to install and run software witout worrying about setup or dependency
+   
+DOCKER ECO SYSTEM
+          docker client
+          docker server
+          docker machine
+          docker image
+          docker hub
+          docker  compose	
+all this combined together called docker ecosystem
+docker is a platform of ecosystem around creating and running containers.
+
+
+Docker Images are used to package up applications and pre-configured server environments. Containers use server information and file system provided by image in order to operate. Images can be shared on Docker Hub
+
+DOCKER IMAGE
+   A Docker image is a read-only template that contains a set of instructions for creating a container that can run on the Docker platform
+   Images can exist without containers, whereas a container needs to run an image to exist.
+   A Docker image is an immutable (unchangeable) file that contains the source code, libraries, dependencies, tools, and other files needed for an application to run.
+   
+   DOCKER TRUSTED REGISTERY which stores all the docker images
+   
+DOCKER CONTAINER
+    Docker container is a virtualized run-time environment where users can isolate applications from the underlying system. These containers are compact, portable units in which you can start up an application quickly and easily.
+    docker container is a read-write 	
+	
+INSTALLING DOCKER 
+     yum install -y yum-utils
+     yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+	 yum-config-manager --enable docker-ce-nightly
+	 yum-config-manager --enable docker-ce-test
+	 yum install docker-ce docker-ce-cli containerd.io
+	  systemctl start docker
+	   systemctl status docker
+	   docker run hello-world=======if the installation is correct it wil print output
+	   sudo curl -L "https://github.com/docker/compose/releases/download/1.26.0/docker-compose-$(uname -s)-$(uname -m)"  -o /usr/local/bin/docker-compose=======================================to install docker compose 
+sudo mv /usr/local/bin/docker-compose /usr/bin/docker-compose
+sudo chmod +x /usr/bin/docker-compose
+	   
+	 [root@localhost containerd]# docker --version
+Docker version 20.10.5, build 55c4c88
+[root@localhost containerd]#
+
+
+DOCKER CLIENT AND SERVER 
+
+run command = create + start 
+
+when we run "docker run hello-world"----->docker client--->docker server---->image cache..
+
+first the message passes to docker client then it goes to docker server and search in image cache, all this process happes in our local machine
+if hello world is in the image cache we will get out put. 
+
+if it is not there, from when we run "docker run hello-world"----->docker client--->docker server---->(docker hub   cloud) from docker hub it will pull hello-world and store in image cache and display to us.
+
+
+REALLY WHAT IS CONTAINER
+
+normal os working method
+  chrome or nodejs---->system call----->kernal----->hardware like (cpu,memory,hard disk)
+  
+if chrome run using python 2 and nodej2 run using python 3.  in our system we installed only python3 so system call triggers kernal and starts only nodej2 and failed to start chrome due to python 2 missing
+
+if we have both python 2 and python 3 in our sustem it will run both chrome and nodej2  
+
+
+container::::
+
+Containers. A container is a runnable instance of an image. You can create, start, stop, move, or delete a container using the Docker API or CLI. You can connect a container to one or more networks, attach storage to it,
+
+   chrome--->kernal--->have separate hard ware like(hard drive network  ram cpu)
+we have separate container for this chrome which is ready to run.
+
+
+
+
+DOCKER pull command used to get docker image from repositry
+docker push command used to store the docker image in regitry
+
+docker file----->docker image----we can store docker image in docker hub----->  from docker hub user can create mltiple container using docker images
+
+DOCKER RUN COMMAND::::::::::::::;
+   [root@localhost containerd]# docker run busybox==========================busybox is not in our localmachine so it is pulled docker hub
+Unable to find image 'busybox:latest' locally
+latest: Pulling from library/busybox
+8b3d7e226fab: Pull complete
+Digest: sha256:ce2360d5189a033012fbad1635e037be86f23b65cfd676b436d0931af390a2ac
+Status: Downloaded newer image for busybox:latest
+
+####docker run busybox <command>
+
+[root@localhost ~]# docker container run -it centos================another command to log in the server 
+[root@347059eceeb2 /]# exit
+[root@localhost ~]# docker run -it centos sh
+sh-4.4# exit
+exit
+[root@localhost ~]# docker run -it centos bash
+[root@7b319055a028 /]#
+
+
+[root@localhost ~]# docker start fe03d17543a8
+fe03d17543a8
+[root@localhost ~]# docker ps
+CONTAINER ID   IMAGE       COMMAND       CREATED             STATUS         PORTS     NAMES
+fe03d17543a8   samraj/ct   "/bin/bash"   About an hour ago   Up 3 seconds             upbeat_agnesi
+[root@localhost ~]# docker ps -a | head
+CONTAINER ID   IMAGE           COMMAND                  CREATED              STATUS                           PORTS       NAMES
+7b319055a028   centos          "bash"                   About a minute ago   Exited (0) 32 seconds ago                    brave_bhaskara
+8552da06124f   centos          "sh"                     About a minute ago   Exited (0) About a minute ago                elegant_bouman
+347059eceeb2   centos          "/bin/bash"              2 minutes ago        Exited (0) 2 minutes ago                     compassionate_lamport
+fe03d17543a8   samraj/ct       "/bin/bash"              About an hour ago    Up 12 seconds                                upbeat_agnesi
+abbfcf69f9f9   samraj/ct       "/bin/bash"              About an hour ago 
+
+
+[root@localhost containerd]# docker run busybox echo hi there
+hi there
+
+
+[root@localhost containerd]# docker run busybox ls============to run  a container
+bin
+dev
+etc
+home
+proc
+root
+sys
+tmp
+usr
+var
+
+unitill some process running on the container we cant see container name in the ps command
+[root@localhost bin]# docker ps================to list running container.currently none of the container running 
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+[root@localhost bin]#
+
+
+[root@localhost bin]# docker ps -a=============to see all the ran and running container
+CONTAINER ID   IMAGE         COMMAND           CREATED         STATUS                     PORTS     NAMES
+440b5ba98327   busybox       "df -TPH"         5 minutes ago   Exited (1) 5 minutes ago             confident_brahmagupta
+cda14fc4cbba   busybox       "df -hk"          5 minutes ago   Exited (0) 5 minutes ago             sharp_northcutt
+9eefb07f9e4e   busybox       "ls"              6 minutes ago   Exited (0) 5 minutes ago             nervous_golick
+ab71aff9d51a   busybox       "echo hi there"   7 minutes ago   Exited (0) 7 minutes ago             suspicious_bardeen
+dfe00db3a7f2   busybox       "sh"              8 minutes ago   Exited (0) 7 minutes ago             jolly_montalcini
+30ab440cebf8   busybox       "sh"              8 minutes ago   Exited (0) 8 minutes ago             affectionate_kalam
+28db29022ffa   hello-world   "/hello"          2 hours ago     Exited (0) 2 hours ago               xenodochial_wozniak
+9243f3b4637a   hello-world   "/hello"          2 hours ago     Exited (0) 2 hours ago               sharp_grothendieck
+521ed0296511   hello-world   "/hello"          2 hours ago     Exited (0) 2 hours ago               brave_lehmann
+[root@localhost bin]#
+
+docker ps -a it will show all the container it will show all the container
+dokcer stop <then given container id>   it will stop the container
+docker start (container id>
+
+REMOVING CONTAINERS::::::::::::::::::::::::::::::
+
+[root@localhost ~]# docker system prune==========tab will work and it will remove all the stopped and not used containers
+WARNING! This will remove:
+  - all stopped containers
+  - all networks not used by at least one container
+  - all dangling images
+  - all dangling build cache
+
+Are you sure you want to continue? [y/N] y
+
+
+[root@localhost ~]# docker images===========================to view images its a local stored images 
+REPOSITORY    TAG       IMAGE ID       CREATED      SIZE
+busybox       latest    a9d583973f65   4 days ago   1.23MB
+hello-world   latest    d1165f221234   8 days ago   13.3kB
+[root@localhost ~]#
+
+RETRIVIEWING LOGS FROM CONTAINER::::::::::::::::::::::::::
+
+
+ [root@localhost ~]# docker run -it -d hello-world======================-it  (intractive mode) -d deamon
+d696a550564f8a4cfd7217a99f0f9736055aaf30fda6a5b19e9f3bbf3e30c005===========we get container ID 
+[root@localhost ~]# docker run -it -d busybox
+c7687075b1bb948747bdaddbe5c2915f4cd14e0581d107657c0c314f8dc7560a
+
+
+STOPPING CONTAINER::::::::::::::::::::::::::::;
+  docker stop container id===========it will stop process and will save the open files, 
+  docker kill container id===========it will kill kernal process first and will stop. quick kill process.  will not save opened files
+  
+EXECUTING COMMANDS IN CONTAINER:::::::::::::::::::::::::::::;
+
+  docker exec -it container id command
+  
+   
+ [root@localhost ~]# docker start d5c10440cf3b==============start the conatier id
+d5c10440cf3b
+
+[root@localhost ~]# docker exec -it a3c140bb6b28 uptime=======================can check input from teh command mode of partiular container
+ 07:33:17 up 50 min,  0 users,  load average: 0.41, 0.17, 0.11
+
+
+[root@localhost ~]# docker container run -it centos====================to login docker container 
+[root@bfc6d92e9b0e /]# exit
+exit
+[root@localhost ~]# docker images
+REPOSITORY   TAG       IMAGE ID       CREATED        SIZE
+centos       latest    300e315adb2f   3 months ago   209MB
+[root@localhost ~]#
+
+  
+GETTING COMMAND PROMPT INSIDE THE CONTAINERS::::::::::::::::::::::
+
+we have 
+bash, powershell, zsh,sh  to login in our containers 
+
+powershell for windows
+
+[root@localhost ~]# docker exec -it dd8e4ba7fb9d bash
+[root@dd8e4ba7fb9d /]# exit
+exit
+[root@localhost ~]# docker exec -it 75de19fc597a sh
+# exit
+
+[root@localhost ~]# docker exec -it dd8e4ba7fb9d sh
+sh-4.4# uptime
+ 07:44:44 up  1:01,  0 users,  load average: 0.06, 0.02, 0.04
+sh-4.4# exit
+exit
+[root@localhost ~]#
+
+CREATING DOCKER IMAGES::::::::::::::::::::
+BASE IMAGE:::::::::::::::::::::::::
+   
+[root@localhost ~]# docker images==============================list all images
+REPOSITORY   TAG       IMAGE ID       CREATED        SIZE
+centos       latest    300e315adb2f   3 months ago   209MB
+
+
+TAGS:::::
+
+In simple words, Docker tags convey useful information about a specific image version/variant. They are aliases to the ID of your image which often look like this: f1477ec11d12 . It's just a way of referring to your image
+
+
+[root@localhost ~]# docker tag centos samraj/ct
+[root@localhost ~]# docker images
+REPOSITORY   TAG       IMAGE ID       CREATED        SIZE
+samraj/ct    latest    300e315adb2f   3 months ago   209MB
+centos       latest    300e315adb2f   3 months ago   209MB
+
+
+[root@localhost ~]# docker push samraj/ct=======================that tag can be pushed to our hub repository
+Using default tag: latest
+The push refers to repository [docker.io/samraj/ct]
+2653d992f4ef: Mounted from samraj/samraj
+latest: digest: sha256:dbbacecc49b088458781c16f3775f2a2ec7521079034a7ba499c8b0bb7f86875 size: 529
+
+
+=====================================================================
+
+
+DOCKER SWARM:::::::::::;;   https://rominirani.com/docker-swarm-tutorial-b67470cf8872
+   a swarm is a group of machines that are running docker and joined into a cluster.
+   
+   A Docker Swarm is a group of either physical or virtual machines that are running the Docker application and that have been configured to join together in a cluster. ... The activities of the cluster are controlled by a swarm manager, and machines that have joined the cluster are referred to as nodes
+   
+   
+   [root@localhost ~]#  docker-machine
+active            env               ip                mount             restart           ssh               stop              use
+config            help              kill              provision         rm                start             upgrade           version
+create            inspect           ls                regenerate-certs  scp               status            url
+
+
+[root@localhost ~]# docker swarm
+ca          init        join        join-token  leave       unlock      unlock-key  update
+[root@localhost ~]# docker swarm
+
+Usage:  docker swarm COMMAND
+
+Manage Swarm
+
+Commands:
+  ca          Display and rotate the root CA
+  init        Initialize a swarm
+  join        Join a swarm as a node and/or manager
+  join-token  Manage join tokens
+  leave       Leave the swarm
+  unlock      Unlock swarm
+  unlock-key  Manage the unlock key
+  update      Update the swarm
+
+Run 'docker swarm COMMAND --help' for more information on a command.
+[root@localhost ~]#
+
+   
+   step 1 to create docker machine to act as manager and nodes(slave machine)
+   
+   wget https://github.com/docker/machine/releases/download/v0.14.0/docker-machine-$(uname -s)-$(uname -m)
+   mv docker-machine-Linux-x86_64 docker-machine
+   chmod +x docker-machine
+   mv docker-machine /usr/local/bin
+   
+   [root@localhost tmp]# docker-machine -v
+docker-machine version 0.14.0, build 89b8332
+
+
+
+
+[root@localhost ~]# docker-machine create --driver virtualbox manager1=======will create manager node 
+[root@localhost ~]# docker-machine create --driver virtualbox worker=========create worker  node
+[root@localhost ~]# docker-machine ls===========list all nodes
+[root@localhost ~]# docker-machine env manager1===========can see the environamen to fthe machine like ip where it is stored 
+[root@localhost ~]# docker-machine ssh manager=========to login the manager machine
+
+[root@localhost ~]# docker swarm
+ca          init        join        join-token  leave       unlock      unlock-key  update
+
+[root@localhost ~]# docker swarm init --advertise-addr <ip of the manager node>========run this command on manager node once logged inside the managed node
+this command use to mark whihc is manager node 
+untill executing this commND ON manager node, node will act as normal
+
+[root@localhost ~]# docker swarm join-token <ip of other node> ========to join more manager node
+
+To add a manager to this swarm, run 'docker swarm join-token manager' and follow the instructions.
+
+[root@localhost ~]# docker node ls===========run on manager node to list active manager node.
+ID                            HOSTNAME                STATUS    AVAILABILITY   MANAGER STATUS   ENGINE VERSION
+2qhmjqqa4x31q192d366o5r5v *   localhost.localdomain   Ready     Active         Leader           20.10.5
+
+the above command can not be executed on worker node 
+
+
+TO ADDING WORKER MACHINE IN MANAGER NODE
+
+[root@localhost ~]# docker swarm join-token worker===============run this command in manager node, copy the below displayed command and run on worker noder
+
+To add a worker to this swarm, run the following command:
+
+ docker swarm join --token SWMTKN-1-0gdo8cs69r3ljm8ndexdle78f6e69szz3ux3vge7057anv7k2f-0sjdov0uszu7inj4vwx1hrt0t 192.168.159.128:2377
+ 
+ 
+ [root@localhost ~]# docker info=========will display all info about docker machine and docker swarm machines
+
+
+
+
+=====================
+
+root@ip-172-31-49-205:~# docker swarm init --advertise-addr 172.17.0.2
+Swarm initialized: current node (c67aqdn7wuouy0ek95wljdm2z) is now a manager.
+
+
+
+
+
+
+  
+
+  
+  
+
+
+
+
+  
+	   
+	 
+	
+

@@ -1,0 +1,278 @@
+[root@localhost ~]# docker
+
+Usage:  docker [OPTIONS] COMMAND
+
+A self-sufficient runtime for containers
+
+Options:
+      --config string      Location of client config files (default "/root/.docker")
+  -c, --context string     Name of the context to use to connect to the daemon (overrides DOCKER_HOST env var and default context set with "docker
+                           context use")
+  -D, --debug              Enable debug mode
+  -H, --host list          Daemon socket(s) to connect to
+  -l, --log-level string   Set the logging level ("debug"|"info"|"warn"|"error"|"fatal") (default "info")
+      --tls                Use TLS; implied by --tlsverify
+      --tlscacert string   Trust certs signed only by this CA (default "/root/.docker/ca.pem")
+      --tlscert string     Path to TLS certificate file (default "/root/.docker/cert.pem")
+      --tlskey string      Path to TLS key file (default "/root/.docker/key.pem")
+      --tlsverify          Use TLS and verify the remote
+  -v, --version            Print version information and quit
+
+Management Commands:
+  app*        Docker App (Docker Inc., v0.9.1-beta3)
+  builder     Manage builds
+  buildx*     Build with BuildKit (Docker Inc., v0.5.1-docker)
+  config      Manage Docker configs
+  container   Manage containers
+  context     Manage contexts
+  image       Manage images
+  manifest    Manage Docker image manifests and manifest lists
+  network     Manage networks
+  node        Manage Swarm nodes
+  plugin      Manage plugins
+  secret      Manage Docker secrets
+  service     Manage services
+  stack       Manage Docker stacks
+  swarm       Manage Swarm
+  system      Manage Docker
+  trust       Manage trust on Docker images
+  volume      Manage volumes
+
+Commands:
+  attach      Attach local standard input, output, and error streams to a running container
+  build       Build an image from a Dockerfile
+  commit      Create a new image from a container's changes
+  cp          Copy files/folders between a container and the local filesystem
+  create      Create a new container
+  diff        Inspect changes to files or directories on a container's filesystem
+  events      Get real time events from the server
+  exec        Run a command in a running container
+  export      Export a container's filesystem as a tar archive
+  history     Show the history of an image
+  images      List images
+  import      Import the contents from a tarball to create a filesystem image
+  info        Display system-wide information
+  inspect     Return low-level information on Docker objects
+  kill        Kill one or more running containers
+  load        Load an image from a tar archive or STDIN
+  login       Log in to a Docker registry
+  logout      Log out from a Docker registry
+  logs        Fetch the logs of a container
+  pause       Pause all processes within one or more containers
+  port        List port mappings or a specific mapping for the container
+  ps          List containers
+  pull        Pull an image or a repository from a registry
+  push        Push an image or a repository to a registry
+  rename      Rename a container
+  restart     Restart one or more containers
+  rm          Remove one or more containers
+  rmi         Remove one or more images
+  run         Run a command in a new container
+  save        Save one or more images to a tar archive (streamed to STDOUT by default)
+  search      Search the Docker Hub for images
+  start       Start one or more stopped containers
+  stats       Display a live stream of container(s) resource usage statistics
+  stop        Stop one or more running containers
+  tag         Create a tag TARGET_IMAGE that refers to SOURCE_IMAGE
+  top         Display the running processes of a container
+  unpause     Unpause all processes within one or more containers
+  update      Update configuration of one or more containers
+  version     Show the Docker version information
+  wait        Block until one or more containers stop, then print their exit codes
+
+Run 'docker COMMAND --help' for more information on a command.
+
+
+
+docker for windows. it should be 64 bit prod edu, enable hyper v, enable virtulization
+
+
+developer write a code like dependency requirement application create docker files
+docker trusted registery which stores all the docker images 
+
+
+[root@localhost ~]# docker
+attach     container  events     image      kill       manifest   port       restart    search     stats      top        volume
+build      context    exec       images     load       network    ps         rm         secret     stop       trust      wait
+builder    cp         export     import     login      node       pull       rmi        service    swarm      unpause
+commit     create     help       info       logout     pause      push       run        stack      system     update
+config     diff       history    inspect    logs       plugin     rename     save       start      tag        version
+[root@localhost ~]# docker
+
+
+docker registry::;
+   images are stored in docker registeyr
+   can store the images either in public or private
+   docker hub is dockers own cloud repositiry 
+   
+docker images:::::
+   read only template used to create containers stored in docker hub or in our local machine.
+   if th eimage is not present locally, docker will pull the image from registry dot half.com
+
+docker conatiner::::::;;
+   contains every thing needed to run application, built from one or more images 
+it means to create one container one or more images required 
+
+
+ docker pull ubuntu===========it will pull ubuntu container(server)
+ 
+ [root@localhost ~]# docker search  rhel=============================================================================to search our needed os 
+NAME                               DESCRIPTION                                     STARS     OFFICIAL   AUTOMATED
+richxsl/rhel7                      RHEL 7 image with minimal installation          30
+gidikern/rhel-oracle-jre           RHEL7 with jre8u60                              8                    [OK]
+roboxes/rhel6                      A generic Red Hat Enterprise Linux (RHEL) 6 …   5
+richxsl/rhel6.5                    RHEL 6.5 image with minimal installation        5
+roboxes/rhel8                      A generic Red Hat Enterprise Linux (RHEL) 8 …   3
+z3cka/rhel67                       Minimal Red Hat 6.7 base image build from rh…   2
+roboxes/rhel7                      A generic Red Hat Enterprise Linux (RHEL) 7 …   2
+darksolar/rhel6.6-gcc4.9           rhel6.6 with gcc4.9.2                           1                    [OK]
+lynxr/rhel                         It's a clear base image RHEL (now only 6.4) …   1
+kdiraviam/rhel6-ruby-chef          This repo contains a rhel6 image with ruby a…   
+ 
+ [root@localhost ~]# docker start d5c10440cf3b==============start the conatier id
+d5c10440cf3b
+
+[root@localhost ~]# docker exec -it a3c140bb6b28 uptime=======================can check 
+ 07:33:17 up 50 min,  0 users,  load average: 0.41, 0.17, 0.11
+
+
+ 
+ [root@localhost ~]# docker run -it ubuntu===============to log in the container
+root@dff7c3fe2870:/# ifconfig
+bash: ifconfig: comma
+
+[root@localhost ~]# docker logs dff7c3fe2870==============list wat r the commands we used
+root@dff7c3fe2870:/# ifconfig
+bash: ifconfig: command not found
+root@dff7c3fe2870:/# uptime
+ 17:06:06 up  4:35,  0 users,  load average: 0.90, 0.23, 0.08
+root@dff7c3fe2870:/# exit
+exit
+[root@localhost ~]#
+
+
+
+ [root@localhost ~]# docker ps -a
+CONTAINER ID   IMAGE         COMMAND                  CREATED          STATUS                      PORTS       NAMES
+0f28ea56666a   centos        "/bin/bash"              9 minutes ago    Exited (0) 9 minutes ago                dreamy_mendel
+a33bb3167430   ubuntu        "/bin/bash"              25 minutes ago   Exited (0) 25 minutes ago               vigorous_driscoll
+f19bccbf23d0   ubuntu        "/bin/bash"   
+
+
+
+to perform commit and push we need repositery in docker hub """https://hub.docker.com/repository/docker/samraj/samraj""" i created own account in docker hub
+
+if we made changes on the container images we can save and push the container to the repositry  here samraj is our repositry name and the created push will be stored in our reposityr
+
+
+[root@localhost ~]# docker commit 9e891be364d8 samraj/debin=============commit used to create new image from existing conatier (like copy and paste)
+sha256:4b684a60a2dbea993a6de5bef1e5448d5489fd2d93d77ce7ad78be248499610b
+
+[root@localhost ~]# docker push samraj/debin=============it will push debin to our repositry 
+Using default tag: latest
+The push refers to repository [docker.io/samraj/debin]
+126fe54e0987: Pushed
+0e41e5bdb921: Mounted from library/debian
+latest: digest: sha256:cf196815541f7b52e71a636445d138b1fdf46e34ad077c48b7a3f3c7b3c3a0ef size: 736
+[root@localhost ~]#
+
+
+
+
+ 
+ docker log in credential can we created in https://hub.docker.com
+ 
+ # docker login
+ # docker logout 
+ 
+ DOCKER FILE:::::::::;
+ 
+ use man docker file
+ 
+    The Dockerfile is a configuration file that automates the steps of creating a Docker image. It is similar to a Makefile. Docker reads instructions
+       from the Dockerfile to automate the steps otherwise performed manually to create an image. To build an image, create a file called Dockerfile.
+
+
+docker file syntax;;;;
+   comments and commands+aruguments
+ FROM:::::::::::::::we have from command which will pull images(os images)   
+ RUN::::::after getting os using from we need to use run to run the container,we can use any shell command
+ CMD::: cmd is same liek run 
+ ENTRYPOINT:::::::;  if we have entrypoint command it will run first, even if we specified run or cmd
+ ADD::::::;;;;;;;copies file from source to destination
+ 
+ still many more use man dockerfile for full info
+ 
+ ###FROM ubuntu
+ ###RUN <command>
+ ===============================================
+ create a directory to your required place 
+ 
+ vi Dockerfile===========D should be always caps under the file we wrote below step which install ubuntu 18 versio and  
+ 
+once the docker file executed we can see the new images using"docker images"
+ docker build===============is the command used to run the docker file once the file runs it will create th os and will insatll 
+ 
+ FROM ubuntu:18.04
+COPY . /app
+RUN yum update install 
+
+Each instruction creates one layer:
+
+FROM creates a layer from the ubuntu:18.04 Docker image.
+COPY adds files from your Docker client’s current directory.
+RUN builds your application with make.
+CMD specifies what command to run within the container.
+
+EXPORT AND IMPORT :::::::::::::::::::::::::::::::: is like create tar of the container and extracting
+
+[root@localhost ~]# docker ps
+CONTAINER ID   IMAGE       COMMAND       CREATED             STATUS          PORTS     NAMES
+fe03d17543a8   samraj/ct   "/bin/bash"   About an hour ago   Up 22 minutes             upbeat_agnesi
+[root@localhost ~]# docker export -o="mydoctar" fe03d17543a8=====================================created  tar file with current running container
+[root@localhost ~]# ls
+anaconda-ks.cfg  hand2.yaml  hand.yaml  mydoctar  original-ks.cfg  stat1.yaml  windows-docker
+[root@localhost ~]#
+
+===================mydocttar is compressed tar file we uncompressed, we can see this uncomprressed using :docker images"
+[root@localhost ~]# docker import /tmp/mydoctar
+sha256:2de86487bf9deb1db2b84e440f2cd48987a692103f53c51b77bfe03845c366fe
+[root@localhost ~]# ls
+
+[root@localhost tmp]# docker images
+REPOSITORY    TAG       IMAGE ID       CREATED          SIZE
+<none>        <none>    2de86487bf9d   39 seconds ago   209MB
+samraj/comm   latest    649f1165fc8a   13 minutes ago   209MB
+samraj/ct     latest    300e315adb2f   3 months ago     209MB
+centos        latest    300e315adb2f   3 months ago     209MB
+[root@localhost tmp]#
+
+
+=======================================================================================================
+
+ADVANCE DOCKER COMMANDS 
+
+  docker compose  and docker swarm
+  
+Docker Compose(yaml format) is a tool for defining and running multi-container Docker applications. In other words, if you have a need to define a service that requires more than one Docker container to function, Docker Compose might be the tool for you.
+
+The first thing we must do is create a new file. We'll create that file within a newly created directory. Issue the command mkdir ~/docker-build. Change into that newly created directory with the command cd ~/docker-build. Once inside that directory, create the new docker-compose.yml file with the command:
+
+vi docker-compose.yml
+
+version: '3'
+services:
+  web:
+    image: nginx
+  db:
+    image: mysql
+    ports:
+    - "3306:3306"
+    environment:
+    - MYSQL_ROOT_PASSWORD=password
+    - MYSQL_USER=user
+    - MYSQL_PASSWORD=password
+    - MYSQL_DATABASE=demodb
+
+docker-compose build
+docker-compose up 

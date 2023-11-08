@@ -1,0 +1,16 @@
+---
+- name: adding user
+  hosts: all
+  vars:
+    user: samraj
+  tasks:
+    - name: adding user "{{ user }}"
+      user:
+        name: "{{ user }}"
+        group: wheel
+      register: ot
+    - debug:
+        msg: user "{{ user }}" created on {{inventory_hostname}}
+...
+
+

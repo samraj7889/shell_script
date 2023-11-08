@@ -1,0 +1,127 @@
+with_itesm is used as a label to listen different itesm
+
+[root@localhost sam]# cat with.yaml
+---
+- name: with
+  hosts: all
+  tasks:
+    - name: service
+      service:
+        name: "{{ item }}"
+        state: stopped
+      with_items:
+        - httpd
+        - firewalld
+      register: ot
+    - debug: var=ot
+...
+[root@localhost sam]# cat with2.yaml
+---
+- name: with
+  hosts: all
+  vars:
+    user:
+      - y1
+      - y2
+    yum:
+      - httpd
+      - firewalld
+  tasks:
+    - name: creating {{ user }}
+      user:
+        name: "{{ item }}"
+        state: present
+      with_items: "{{ user }}"
+    - name: uninstalling {{ yum }}
+      yum:
+        name: "{{ item }}"
+        state: absent
+      with_items: "{{ yum }}"
+...
+[root@localhost sam]#
+
+
+=====================================
+
+ROLES 
+
+ansible-galaxy init welcome --offline   ====== here welcome is the name given by us to create roles work and --offline is the command,used not to get updated from internet
+
+[root@localhost sam]# ansible-galaxy init welcome --offline
+- Role welcome was created successfully=====================================welcome directory created 
+
+[root@localhost welcome]# ls -l
+total 4
+drwxr-xr-x 2 root root   22 Mar  1 02:04 defaults
+drwxr-xr-x 2 root root    6 Mar  1 02:04 files
+drwxr-xr-x 2 root root   22 Mar  1 02:04 handlers
+drwxr-xr-x 2 root root   22 Mar  1 02:04 meta
+-rw-r--r-- 1 root root 1328 Mar  1 02:04 README.md
+drwxr-xr-x 2 root root   22 Mar  1 02:04 tasks
+drwxr-xr-x 2 root root    6 Mar  1 02:04 templates
+drwxr-xr-x 2 root root   39 Mar  1 02:04 tests
+drwxr-xr-x 2 root root   22 Mar  1 02:04 vars
+
+structure of roles
+
+[root@localhost welcome]# tree
+.
+├── defaults
+│   └── main.yml
+├── files
+├── handlers
+│   └── main.yml
+├── meta
+│   └── main.yml
+├── README.md
+├── tasks              ================ here we write our play book
+│   └── main.yml
+├── templates
+├── tests
+│   ├── inventory
+│   └── test.yml
+└── vars
+    └── main.yml
+
+
+
+[root@localhost tasks]# pwd
+/home/sam/welcome/tasks
+
+[root@localhost tasks]# ls -l
+total 16
+-rw-r--r-- 1 root root 204 Mar  1 02:17 configure.yaml
+-rw-r--r-- 1 root root  50 Mar  1 02:12 install.yaml
+-rw-r--r-- 1 root root  97 Mar  1 02:20 main.yml
+-rw-r--r-- 1 root root  72 Mar  1 02:18 service.yaml
+
+
+[root@localhost tasks]# cat configure.yaml
+---
+- name: copy
+  copy:
+    src: /tmp/test/192.168.159.129/home/sam/invent
+    dest: /etc/test
+- name: copy
+  copy:
+    src: /var/hhh
+    dest: /var/www/html/index.html
+  notify:
+    - restart firewall
+[root@localhost tasks]# cat install.yaml
+
+- name: httpd
+  yum: name=firewalld state=latest
+[root@localhost tasks]# cat service.yaml
+---
+- name: service
+  service:
+    name: firewalld
+    state: restarted
+[root@localhost tasks]# cat main.yml   =================we imported all the yaml file in main.yaml
+---
+ - import_tasks: configure.yaml
+ - import_tasks: install.yaml
+ - import_tasks: service.yaml
+[root@localhost tasks]#
+

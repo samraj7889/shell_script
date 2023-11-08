@@ -1,0 +1,119 @@
+bios ==== basic input and output system    old one
+uefi === unififed extensible firmware interface   new one 
+
+BIOS    It acts as a bridge between a computer’s hardware components and the operating system.
+
+
+UEFI stands for Unified Extensible Firmware Interface. It does the same job as a BIOS, but with one basic difference: it stores all data about initialization and startup in an . ... UEFI supports drive sizes upto 9 zettabytes, whereas BIOS only supports 2.2 terabytes. UEFI provides faster boot time.
+
+UEFI stores information about initialization and startup in an .efi file in a hard dive partition called EFI System Partition (ESP). It’s the same partition that contains the bootloader. What’s important to note here is that UEFI can directly boot the operating system bypassing the BIOS POST, which results in faster boot times.
+
+What is the Difference Between BIOS and UEFI?
+BIOS is legacy technology that goes back to the DOS era and is written in assembler, whereas the more modern UEFI is written in C. BIOS still works in 16-bit mode, which means it can only address 1MB of executable memory. This limits its ability to initialize multiple devices at once and leads to slower boot times.
+
+On the other hand, UEFI can run in 64-bit mode, which means it has more addressable space than BIOS, making the boot process faster. The new technology also has a number of other advantages, including the ability to boot from much larger drives, with a theoretical limit of 9.4 Zettabytes (1ZB = 1000 exabytes = 1021 bytes). BIOS, on the other hand, can only boot from drives 2.2TB or smaller.
+
+
+GRUB and GRUB2===============grub is the old one and grub2 is the new one
+
+
+ Grub has two configuration files namely menu.lst and grub.conf whereas, Grub2 has only one main configuration file namely grub.cfg
+ grub is difficult to modify    grub2 /etc/default/grub customizabel and human readable can be modified easyly once we made chnage give sudo update-grub
+ 
+ grub boot menu display on booting     grub2 can hide boot menu
+ 
+ 
+ booting method
+ 
+ pxe,usb,cd,ipxe,iso,hard drive
+ ipxe is more advanced then pxe
+ 
+ While standardized PXE clients use TFTP to transfer data, non-standardized iPXE client firmware adds the ability to retrieve data through other protocols, including HTTP, iSCSI, ATA over Ethernet (AoE), and Fibre Channel over Ethernet (FCoE). ... iPXE is the official replacement for gPXE.
+ 
+ if kernal panic error occur reboot the server and long press shift.
+ it will take, to grub menu in that press advance option lastthe last successfully booted kernel.
+ next remove the error kernal and reinstall the new kernal.
+ 
+ present in /boot
+ 
+ 
+ HOW TO LOAD modules automatically and how not to load error module during booting
+ 
+ modprobe - Add and remove modules from the Linux Kernel
+ 
+ [root@localhost modprobe.d]# tree
+.
+├── dist-alsa.conf
+├── dist-blacklist.conf
+├── libmlx4.conf
+└── systemd.conf
+
+0 directories, 4 files
+[root@localhost modprobe.d]# pwd
+/lib/modprobe.d
+[root@localhost modprobe.d]#
+
+
+[root@localhost modules]# ls -l
+total 8
+drwxr-xr-x. 3 root root   19 Aug 12  2020 4.18.0-187.el8.x86_64
+drwxr-xr-x. 6 root root 4096 Aug 12  2020 4.18.0-193.14.2.el8_2.x86_64
+drwxr-xr-x. 6 root root 4096 Aug 12  2020 4.18.0-80.el8.x86_64
+[root@localhost modules]# pwd
+/lib/modules
+[root@localhost modules]#
+
+
+[root@localhost scsi]# pwd
+/lib/modules/4.18.0-193.14.2.el8_2.x86_64/kernel/drivers
+
+
+all modules will be stored under /lib/modules/4.18.0-193.14.2.el8_2.x86_64/kernel
+ 
+ directories cd /lib/modules
+ kernal  4.18.0-193.14.2.el8_2.x86_64
+ under kernal we have direcory kernal  under kernal drivers  under drivers we see all modules 
+ modprobe cdrom.ko==========will install the modules
+ lsmod=== will show all installed modules
+ rmmod scsi_transport_srp ============remove modules 
+ depmod======to update modules if we added any new
+ 
+ ======================================================================================================================
+ 
+ NETWORK 
+ 
+ 
+ #ip add   will list all the IPs,  1.lo is local host we need to consider the second one
+ 
+ 
+ [root@localhost cdrom]# ip route
+default via 192.168.159.2 dev ens33 proto dhcp metric 100   ===============if google is not pinging then trun off and on your interface, wired network
+----------this default ip need to be there to ping 
+192.168.122.0/24 dev virbr0 proto kernel scope link src 192.168.122.1 linkdown
+192.168.159.0/24 dev ens33 proto kernel scope link src 192.168.159.128 metric 100
+[root@localhost cdrom]#
+
+
+comman network config files 
+
+-rw-r--r--. 1 root root 158 Sep 10  2018 /etc/hosts
+lrwxrwxrwx. 1 root root  29 Aug 12  2020 /etc/nsswitch.conf -> /etc/authselect/nsswitch.conf
+-rw-r--r--  1 root root  74 Mar 10 23:52 /etc/resolv.conf
+
+
+[root@localhost etc]# cat hosts
+127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
+::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
+#192.168.159.128  google.com ========================in the hosts file we gave different ip for google, if it is given then while we ping google first it will check our local /etc/hosts and refectl the same
+
+[root@localhost etc]# ping google.com
+PING google.com (192.168.159.128) 56(84) bytes of data.
+64 bytes from google.com (192.168.159.128): icmp_seq=1 ttl=64 time=0.186 ms
+64 bytes from google.com (192.168.159.128): icmp_seq=2 ttl=64 time=0.048 ms
+
+
+
+
+
+
+

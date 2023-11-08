@@ -1,0 +1,154 @@
+jinja 2 templates based on python
+it can be in yaml or in j2 extension
+
+Ansible Jinja2:
+===============
+
+Managing configurations of multiple servers and environments are one of the significant uses of Ansible. But these configuration files may vary for each remote servers or each cluster. But apart from some few parameters, all other settings will be same.
+
+Creating static files for each of these configurations is not an efficient solution. And It will take a lot more time and every time a new cluster is added you will have to add more files. So if there is an efficient way to manage these dynamic values it would be beneficial. This is where Ansible template modules come into play.
+
+A template in Ansible is a file which contains all your configuration parameters, but the dynamic values are given as variables. During the playbook execution, depending on the conditions like which cluster you are using, the variables will be replaced with the relevant values.
+
+You can do much more than replacing the variables though, with the help of Jinj2 templating engine. You can have conditional statements, loops, write macros, filters for transforming the data, do arithmetic calculations, etc.
+
+The template files will usually have the .j2 extension, which denotes the Jinja2 templating engine used.
+
+* The variables in a template file will be denoted by the double curly braces, ‘{{ variables }}’
+
+Why we need Jinja2 templating in Ansible?
+When we manage a fleet of hundreds or thousands of servers of different OS configurations managing configurations on them becomes a tedious task as few parameters always differs from system to system and cluster to cluster.
+
+Copying static files will not suffice in such situation. We need a solution which can dynamically takes the values as per the environment it is running on. And that's Jinja2.
+
+Where the templating happens?
+This all happens on your controller machine before the task is sent and executed on the target machine. We don't need jinja2 packages on target nodes. Only the information required by each task will be sent to remote nodes after template parsing.
+
+What a jinja2 template looks like?
+It's a file containing the configuration parameters. The values which are supposed to be different from cluster to cluster or system to system basis will be supplied dynamically through variables at the time of playbook execution.
+
+
+[root@localhost sam]# cat jinja.yaml
+---
+- name: jinja
+  hosts: all
+  vars:
+    owner: "samraj"
+  tasks:
+    - name: jinja
+      template:
+        src: ji.j2
+        dest: /etc/motd
+...
+[root@localhost sam]# cat ji.j2
+this is system {{ ansible_facts['distribution_version'] }}
+to access the server please get approval from {{ owner }}
+[root@localhost sam]#
+
+
+[root@localhost sam]# cat jinj2.yaml
+---
+- name: jinja
+  hosts: all
+  vars:
+    user: 'samraj'
+  tasks:
+    - name: jinja
+      template:
+        src: /home/sam/ji2.j2
+        dest: /etc/motd
+...
+[root@localhost sam]# cat ji2.j2
+
+hello {{ user }}
+welcome to {{ ansible_facts['distribution_version'] }}
+[root@localhost sam]#
+
+
+[root@localhost sam]# cat jin3.yaml
+---
+- name: jinja
+  hosts: all
+  tasks:
+    - name: jinja
+      template:
+        src: ji3.j2
+        dest: /tmp/text
+...
+[root@localhost sam]# cat ji3.j2
+{% if ansible_facts['distribution_version'] == "8.0" -%}  ======================using if condition
+   this is centos
+{% endif %}
+[root@localhost sam]#
+
+
+[root@localhost sam]# cat jin3.yaml
+---
+- name: jinja
+  hosts: all
+  tasks:
+    - name: jinja
+      template:
+        src: ji3.j2
+        dest: /tmp/text
+...
+[root@localhost sam]# cat ji3.j2
+{% if ansible_facts['distribution_version'] == "7.0" -%}
+   this is centos
+{% elif ansible_facts['distribution_version'] == "8.0" -%}==================== if elif else
+  this is redhat centos
+{% else -%}
+   this is not centos
+{% endif %}
+[root@localhost sam]#
+
+
+
+[root@localhost tmp]# cat text
+this is centos
+[root@localhost tmp]# cat text
+this is not centos
+[root@localhost tmp]# cat text
+this is redhat centos
+[root@localhost tmp]#
+
+
+[root@localhost sam]# cat jin5.yaml
+---
+- name: jinja
+  hosts: all
+  vars:
+    menus:
+      - idily
+      - dosa
+      - poori
+      - kichidi
+  tasks:
+    - name: jinja
+      template:
+        src: ji4.j2
+        dest: /tmp/test
+...
+[root@localhost sam]# cat ji4.j2
+{% for i in menus %}
+  this is the dish {{ i }} we have
+{% endfor %}
+
+[root@localhost sam]#
+
+
+
+[root@localhost tmp]# cat test
+  this is the dish idily we have
+  this is the dish dosa we have
+  this is the dish poori we have
+  this is the dish kichidi we have
+
+[root@localhost tmp]#
+
+
+========================================================================
+
+nested loops
+
+a loop inside a loop is called nested loops

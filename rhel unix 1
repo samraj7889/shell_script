@@ -1,0 +1,5070 @@
+192.168.159.129
+192.168.159.128
+
+cat /proc/meminfo
+
+virtual file that reports the amount of available and used memory.
+ It contains real-time information about the system’s memory usage as well as the buffers and shared memory used by the kernel.
+ The output might differ slightly based on the architecture and operating system in question.
+ 
+ free in your command terminal provides the following result:
+
+free-command
+
+[root@localhost ~]# free -g
+              total        used        free      shared  buff/cache   available
+Mem:              0           0           0           0           0           0
+Swap:             1           0           1
+
+
+The data represents the used/available memory and the swap memory figures in kilobytes.
+
+total	Total installed memory
+used	Memory currently in use by running processes (used= total – free – buff/cache)
+free	Unused memory (free= total – used – buff/cache)
+shared	Memory shared by multiple processes
+buffers	Memory reserved by the OS to allocate as buffers when process need them
+cached	Recently used files stored in RAM
+buff/cache	Buffers + Cache
+available	Estimation of how much memory is available for starting new applications, without swapping.
+
+
+ vmstat command is a useful tool that reports virtual memory statistics.
+ 
+ [root@localhost ~]# vmstat
+procs -----------memory---------- ---swap-- -----io---- -system-- ------cpu-----
+ r  b   swpd   free   buff  cache   si   so    bi    bo   in   cs us sy id wa st
+ 2  0 724480  59544     68 227216   20   55   591    76   74  170  1  1 97  1  0
+[root@localhost ~]#
+
+
+vmstat provides general information about processes, memory, paging, block IO, traps, and CPU activity.
+
+Procs
+r: number of processes waiting for run time.
+b: number of processes in uninterruptible sleep.
+Memory
+swpd: amount of virtual memory used.
+free: amount of idle memory.
+buff: the amount of memory used as buffers.
+cache: amount of memory used as cache.
+Swap
+si: memory swapped in from disk (/s).
+so: memory swapped to disk (/s).
+IO
+bi: Blocks received from a block device (blocks/s).
+bo: Blocks sent to a block device (blocks/s).
+System
+in: number of interrupts per second, including the clock.
+cs: number of context switches per second.
+CPU – These are percentages of total CPU time.
+us: Time spent running non-kernel code. (user time, including nice time)
+sy: Time spent running kernel code. (system time)
+id: Time spent idle. Before Linux 2.5.41, this includes IO-wait time.
+wa: Time spent waiting for IO. Before Linux 2.5.41, included in idle.
+st: Time stolen from a virtual machine. Before Linux 2.6.11, unknown.
+
+
+[root@localhost ~]# lscpu
+Architecture:        x86_64
+CPU op-mode(s):      32-bit, 64-bit
+Byte Order:          Little Endian
+CPU(s):              1
+
+[root@localhost ~]# nproc  =================to check cpu core
+1
+[root@localhost ~]#
+
+
+lscpu command.
+cat /proc/cpuinfo.
+
+[root@localhost ~]# dmidecode -t
+dmidecode: option requires an argument -- 't'
+Type number or keyword expected
+Valid type keywords are:
+  bios
+  system
+  baseboard
+  chassis
+  processor
+  memory
+  cache
+  connector
+  slot
+
+
+
+# echo "- - -" > /sys/class/scsi_host/host[n]/scan
+Three dashes (- – – ) in the above command refers to wild card option which in turn rescan everything.
+# echo "c t l" > /sys/class/scsi_host/host[n]/scan
+c – Channel on the HBA
+t – SCSI target ID
+l – LUN ID
+n – HBA number
+
+
+# ls /sys/class/scsi_host
+host0 host1 host2
+
+# echo "- - -" > /sys/class/scsi_host/host0/scan
+# echo "- - -" > /sys/class/scsi_host/host1/scan
+# echo "- - -" > /sys/class/scsi_host/host2/scan
+
+==============================================================================================================
+
+The /etc/hosts file contains the Internet Protocol (IP) host names and addresses for 
+the local host and other hosts in the Internet network. This file is used to resolve a name into an address 
+As your machine gets started, it will need to know the mapping of some hostnames to IP addresses before DNS can be referenced. 
+This mapping is kept in the /etc/hosts file. In the absence of a name server, any network program on your system consults this file to determine 
+the IP address that corresponds to a host name.
+
+Following is a sample /etc/hosts file:
+
+           IPAddress     Hostname    		 Alias
+           127.0.0.1			localhost	 	 deep.openna.com
+
+/etc/HOSTNAME file
+This file stores your system's host name, your system's fully qualified domain name -FQDN, such as deep.openna.com.
+ Following is a sample /etc/HOSTNAME file:
+
+
+           deep.openna.com
+		   
+
+ /etc/sysconfig/network define that IPv4 networking is enabled, IPv6 networking is not enabled, the host name of the system,
+ and the IP address of the default network gateway:
+
+NETWORKING=yes
+NETWORKING_IPV6=no
+HOSTNAME=host20.mydomain.com
+GATEWAY=192.168.1.1		   
+           
+
+
+
+
+LDAP
+ha cluster configuration with pacemaker
+
+:set number==========inside vi pres esc and tyep (:set number) to see line count inside vi
+to go to particular line in vi  :set number--will set number on all the lines  press (esc 10shift+g) so it will take 10th line insside vi editor
+
+#needs-restarting -r;echo $?    ==== after package installation yum  to check server needes reboot or not 
+/var/log/secure-----------can see how amny time user have wrong password entries
+
+[root@localhost sam]# needs-restarting -r; echo $?
+No core libraries or services have been updated since boot-up.
+Reboot should not be necessary.
+0
+[root@localhost sam]#
+
+Multipathing is the technique of creating more than one physical path between the server and its storage devices.
+ It results in better fault tolerance and performance enhancement that can include separate cables, switches, and controllers
+ 
+ Device Mapper Multipathing or DM-Multipathing is a Linux native multipath tool,
+ which allows you to configure multiple I/O paths between server nodes and storage arrays into a single device. 
+ Regardless of the vendor hardware in use, device mapper creates a block device under /dev/mapper/ for each LUN attached to the system. 
+ DM-Multipath is used to provides –
+ 
+ [root@linux1 ~]# rpm -q device-mapper-multipath
+ [root@linux1 ~]# yum -y install device-mapper-multipath
+ 
+ /etc/multipath.conf
+ 
+ defaults {
+user_friendly_names yes
+}
+blacklist {
+devnode “sda”=====================for example os gets installed in the disk so it will exclude the device 
+}
+
+[root@linux1 ~]# systemctl start multipathd
+[root@linux1 ~]# systemctl enable multipathd
+[root@linux1 ~]# multipath -ll
+mpathb (360014051f89d2bb3300470fa7d4baa10) dm-2 LIO-ORG ,lun0=======l lun mpathb with 2 path sdb and  sdc
+size=2.0G features='0' hwhandler='0' wp=rw
+|-+- policy='service-time 0' prio=0 status=active
+| `- 1:0:0:0 sdb 8:16 active active running
+`-+- policy='service-time 0' prio=0 status=enabled
+  `- 2:0:0:0 sdc 8:32 active active running
+  
+  
+  
+  
+Common Internet File System----samba file system
+
+
+RHEL 6
+
+bios
+   basic input and output of the system  check where the bootable device present like cd,dvd,pendrive 
+mbr 
+   master boot recorder is the first sector of the  hard disk holds  512 bytes it checks.where boot files are located 
+        Primary boot loader info in 1st 446 bytes
+         Partition table info in next 64 bytes
+        MBR validation check in last 2 bytes.
+  
+grub
+    loads configuration from /boot/grub/grub.conf  it provides option to selet kernel to boot  loads kernel 
+kernel
+     kernel execute /sbin/init from intramfs as the first process and pid is 1 
+	 While system starting kernel loads all the necessary Kernel Modules and Drives from initrd.img to load system first process systemd pid is 1
+init
+     /etc/inittab  is the configuration file to decide which run level configured
+	  0- shutdown
+	  1- single user mode
+	  2-- multiuser without nfs
+	  3- full multiuser mode without grapic
+	  4-unused
+	  5-multiuser with grapic
+	  6-restart
+runlevel
+    based on init runlevel will start  /etc/rc.d/rc0.d /etc/rc.d/rc1.d /etc/rc.d/rc2.d /etc/rc.d/rc3.d /etc/rc.d/rc4.d /etc/rc.d/rc5.d /etc/rc.d/rc6.d
+	
+
+booting process of rhel 8
+
+post =====power on self test, each hardware componets test there own to power on  if it is ok then to bios
+
+bios====basic i/o of the system, loads all the info of the hardware
+
+mbr-=== master boot recorder is the first sector of the  hard disk holds  512 bytes it checks.where boot files are located 
+        Primary boot loader info in 1st 446 bytes
+         Partition table info in next 64 bytes
+        MBR validation check in last 2 bytes.
+        It contains information about GRUB2 (GRUB or LILO in old systems).
+         So, in simple terms MBR loads and executes the GRUB2 boot loader.
+
+grub2(version 2)== loads configuration from /boot/grub2/grub.conf  it provides option to selet kernel to boot  loads kernel and initramfs 
+
+kernel===kernel execute /sbin/init from intramfs as the first process and pid is 1 
+          While system starting kernel loads all the necessary Kernel Modules and Drives from initrd.img to load system first process systemd pid is 1
+         on rhel init is replaced with systemd so /sbin/init is a soft link to systemd
+		 [root@localhost grub2]# ls -l /sbin/init
+          lrwxrwxrwx. 1 root root 22 Jul 21  2020 /sbin/init -> ../lib/systemd/systemd
+		  
+systemd======here runlevels are called targets, totally 7 targets(runlevel)
+            [root@localhost system]# pwd
+/lib/systemd/system
+ 
+             [root@localhost system]# ls -l runlevel*target
+lrwxrwxrwx. 1 root root 15 Jul 21  2020 runlevel0.target -> poweroff.target
+lrwxrwxrwx. 1 root root 13 Jul 21  2020 runlevel1.target -> rescue.target
+lrwxrwxrwx. 1 root root 17 Jul 21  2020 runlevel2.target -> multi-user.target
+lrwxrwxrwx. 1 root root 17 Jul 21  2020 runlevel3.target -> multi-user.target
+lrwxrwxrwx. 1 root root 17 Jul 21  2020 runlevel4.target -> multi-user.target
+lrwxrwxrwx. 1 root root 16 Jul 21  2020 runlevel5.target -> graphical.target
+lrwxrwxrwx. 1 root root 13 Jul 21  2020 runlevel6.target -> reboot.target
+[root@localhost system]#
+		  
+
+
+
+
+
+What is Operating System ?
+Operating system is an interface between user and the computer hardware. The hardware of the 
+computer cannot understand the human readable language as it works on binaries i.e. 0's and 1's. Also it 
+is very tough for humans to understand the binary language, in such case we need an interface which 
+can translate human language to hardware and vice-versa for effective communication. 
+
+Types of Operating System:
+ Single User - Single Tasking Operating System 
+ Single User - Multitasking Operating System 
+ Multi User - Multitasking Operating System 
+Single User - Single Tasking Operating System
+ only one user can log into system and can perform only one task at a 
+time. 
+E.g.: MS-DOS
+Single User - Multi tasking operating System 
+only one user to log into the system but a user can perform multiple tasks at a 
+time, browsing internet while playing songs etc. 
+E.g.: Windows -98,Xp,vista,Seven etc.
+Multi User - Multi Tasking Operating System 
+multi user multi task 
+E.g .: UNIX, LINUX etc.
+
+
+Why Linux?
+̓ Fresh implementation of UNIX APIs
+̓ Open source development model
+̓ Supports wide variety of hardware
+̓ Supports many networking protocols and Configurations
+̓ Fully supported
+
+
+user--->shell--->kernal----->hardware
+
+
+FILESYSTEM HIERARCHY SYSTEM
+Linux uses single rooted, inverted tree like file system hierarchy 
+/ This is top level directory
+It is parent directory for all other directories 
+It is called as ROOT directory 
+It is represented by forward slash (/) 
+
+/root it is home directory for root user (super user) 
+It provides working environment for root user 
+
+/home it is home directory for other users 
+It provide working environment for other users (other than root) 
+
+/boot it contains bootable files for Linux 
+Like vmlinuz (kernel)..... ntoskrnl 
+Initrd (INITial Ram Disk)and 
+GRUB (GRand Unified Boot loader).... boot.ini, ntldr 
+/etc it contains all configuration files 
+Like /etc/passwd..... User info 
+/etc/resolv.conf... Preferred DNS 
+/etc/dhcpd.conf.... DHCP server 
+ 
+/usr by default soft wares are installed in /usr directory 
+(UNIX Sharable Resources) 
+
+/opt It is optional directory for /usr 
+It contains third party softwares 
+
+/bin it contains commands used by all users 
+
+/sbin it contains commands used by only Super User (root) 
+(Super user's binary files) 
+/dev it contains device files 
+Like /dev/hda ... for hard disk 
+/dev/cd rom ... for cd rom 
+Similar to device manager of windows 
+/proc it contain process files 
+Its contents are not permanent, they keep changing 
+It is also called as Virtual Directory 
+Its file contain useful information used by OS 
+like /proc/meminfo ... information of RAM/SWAP 
+/proc/cpuinfo ... information of CPU 
+/var it is containing variable data like mails, log files 
+/mnt it is default mount point for any partition 
+It is empty by default 
+/media it contains all of removable media like CD-ROM, pen drive 
+/lib it contains library files which are used by OS 
+It is similar to dll files of windows 
+Library files in Linux are SO (shared object)files 
+
+
+installtion recommended
+
+2gb ram
+40 gb harddisk
+15 to 20 gb for root /
+200mb for /boot
+swap twice of ram
+
+
+========================
+
+VM editor
+
+it has 3 mode
+
+command mode, insert mode, extended mode 
+
+
+Insert Mode:
+ 
+VIM EDITOR 
+VI Visual display editor 
+VIM Visual display editor improved 
+i To begin insert mode at the cursor position
+I
+To insert at the beginning of line 
+a To append to the next word’s letter
+A To Append at the end of the line
+o To insert a new line below the cursor position
+O To insert a new line above the cursor position
+
+
+command mode
+
+gg To go to the beginning of the page
+G To go to end of the page
+w To move the cursor forward, word by word
+b To move the cursor backward, word by word
+nw To move the cursor forward to n words (5W)
+nb To move the cursor backward to n words (5B)
+u To undo last change (word)
+U To undo the previous changes (entire line)
+Ctrl+R To redo the changes
+yy To copy a line
+nyy To copy n lines (5yy or 4yy)
+p To paste line below the cursor position
+P To paste line above the cursor position
+dw To delete the word letter by letter (like Backspace)
+x To delete the world letter by letter (like DEL Key)
+dd To delete entire line
+ndd To delete n no. of lines from cursor position(5dd)
+/ To search a word in the file
+
+
+Extended Mode is used for save and quit or save without quit using “Esc” Key with “:”
+
+Esc+:w To Save the changes
+Esc+:q To quit (Without saving)
+Esc+:wq To save and quit
+Esc+:w! To save forcefully
+Esc+wq! To save and quit forcefully
+Esc+:x To save and quit
+Esc+:X To give password to the file and remove password
+Esc+:20(n) To go to line no 20 or n
+Esc+: se nu To set the line numbers to the file
+Esc+:se nonu To Remove the set line numbers
+
+
+Types of Files:
+
+Symbol Type of File
+- Normal file
+d Directory
+l Link file (shortcut)
+b Block file (Harddisk, Floppy disk)
+c Character file (Keyboard, Mouse)
+
+
+
+[root@localhost ~]# date
+Wed Mar  3 01:55:27 PST 2021
+
+[root@localhost ~]# date +%x
+03/03/2021
+[root@localhost ~]#
+
+[root@localhost ~]# head -n 3 \
+> /etc/passwd \
+> /etc/shadow  ===============after the commad finish press enter
+
+==> /etc/passwd <==
+root:x:0:0:root:/root:/bin/bash
+bin:x:1:1:bin:/bin:/sbin/nologin
+daemon:x:2:2:daemon:/sbin:/sbin/nologin
+
+==> /etc/shadow <==
+root:$1$YZHHScY4$xkejc.NVyUzVYaypdI8Zr/::0:99999:7:::
+bin:*:18027:0:99999:7:::
+daemon:*:18027:0:99999:7:::
+
+[root@localhost ~]#
+
+
+[root@localhost bin]# ls -R /home/sam/  ======= will display all direcories with files inside 
+
+
+ Soft Link                                                                         Hard link
+1 Size of link file is equal to no. of                                        Size of both file is same
+characters in the name of original file
+                                             
+2 Can be created across the Partition                                       Can't be created across the partition
+3 Inode no. of source and link file is                                       Inode no. of both file is same 
+different 
+
+4 if original file is deleted, link is broken                                 If original file is deleted then also link will contain data 
+and data is lost 
+5 SHORTCUT FILE                                                                  back up file 
+
+ln -s <source file>  <destination file>                                        ln <sourcefile> <destination file>
+
+[root@localhost ~]# ln sam sam.slink                                            [root@localhost ~]# ln raj raj.hlink
+[root@localhost ~]# ls -l s*                                                     [root@localhost ~]# ls -l r*
+-rw-r--r-- 2 root root 36 Mar 29 05:26  sam                                       -rw-r--r-- 2 root root 965 Mar 29 05:28 raj
+-rw-r--r-- 2 root root 36 Mar 29 05:26 sam.slink                                  -rw-r--r-- 2 root root 965 Mar 29 05:28 raj.hlink
+
+5 soft link allowed for directory                                                    hard link not allowed for directory
+
+
+
+Filter Commands:======================================================================
+̓ Filter commands are used to filter the output so that the required things can easily be 
+picked up. The commands which are used to filter the output are
+#less 
+#more 
+#head 
+#tail 
+#sort 
+#cut 
+#sed   #sed ‘s/searchfor/replacewith/g’ filename
+
+
+Using tee command:
+
+tee - read from standard input and write to standard output and files
+using tee command it will create new file and copy the same content from the source file, if tee <given file name> already exist it will overwrite the file content
+
+[root@localhost ~]# cat sam
+wejifbreufbeuwilfbewfboe;fcb;wjb ;j
+[root@localhost ~]# cat sam | tee sam2
+wejifbreufbeuwilfbewfboe;fcb;wjb ;j
+[root@localhost ~]# cat sam2
+wejifbreufbeuwilfbewfboe;fcb;wjb ;j
+[root@localhost ~]#
+
+to append without erasing content in the file it will add 
+
+[root@localhost ~]# cat kws    
+eudbuiebdu;ebdo
+[root@localhost ~]#
+[root@localhost ~]# cat kws | tee -a sam2
+eudbuiebdu;ebdo
+[root@localhost ~]# cat sam2
+wejifbreufbeuwilfbewfboe;fcb;wjb ;j
+eudbuiebdu;ebdo
+[root@localhost ~]
+
+
+ find - search for files in a directory hierarchy
+
+
+Option Usage
+-name For searching a file with its name 
+-inum For searching a file with particular inode number 
+-type For searching a particular type of file -user For files whose owner is a particular user 
+-group For files belonging to particular group
+
+
+PREMISSIONS
+
+Permissions                       Files                                                      Directory
+r                           Open the file                                           'ls' the contents of dir
+w                        Write, edit, append, delete file                          Add/Del/Rename contents of dir
+x                        Torunacommand/shellscript                                 To enter into dir using 'cd'
+
+symbloic method
+# chmod [who] [+/-/=] [permissions] file   
+ who To whom the permissions to be assigned 
+User/owner (u); group (g); others (o)
+
+̓ #chmod u+x ktfile (Adding execute permission to user only) ̓ #chmod go-wx ktfile (Removing write and execute permissions from group and other) ̓ #chmod go+wx ktfile (Adding write and execute permissions from group and other) ̓ #chmod go=r ktfile (Giving only read permission to group and other)
+
+
+ Absolute Method (numbers) 
+In Absolute method we use numbers instead of using symbols i.e. 
+̓ Read=4 ̓ Write=2 ̓ Execute=1Assigning different permissions to the file (user=rwx, group=rw and others=r) 
+#chmod 764 ktfile (where 7 means rwx i.e. 4+2+1, rw=6 i.e. 4+2 and 1 indicates x)
+
+UMASK
+
+Umask will decide that what should be the default permissions for a file and directory when it is created.
+The default umask value is 0022
+permission for a file at the time of creation can be 666 
+ whereas a directory can have full permissions i.e. 777
+ root 022
+ user 002
+ 
+  The full permission for the file 666
+ Minus the umask value -022
+ The default permission for file is 644 (rw-,r--,r--
+
+ The full permission for the directory 777
+ Minus the umask value - 022 
+ The default permission for file is 755 (rwx, r-x, r-x)
+
+# tar -cvf /home/raj/conf.tar resolv.conf
+
+/home/raj path
+conf.tar is the name we given
+we taken resolv.conf as tar file
+
+tar -xvf conf.tar -C /home/IBM--- xtracting
+-C to other director
+under /home/idm it will get extract as resolv.conf
+
+
+gzip <file>  ---> file.gz (compressed_form)
+
+gunzip <file.gz> ---> file (normal_form)
+
+gzip -r <dir>  ---> dir/*.gz (compressed_form) compresses all invidual files inside the directory
+
+cat <file1> <file2> <file3> | gzip > all.gz
+
+gzip -c <source_file> > <destination.gz>
+
+gunzip -c <source.gz> > <destination_file>
+
+
+
+Disk Partitioning Criteria: ===========================================
+M 
+BR P P P
+EXTENDED
+L L FREE
+
+MBR = MASTER BOOT RECORD 
+P= PRIMARY PARTITION
+EXTENDED= EXTENDED PARTITION 
+L= LOGICAL PARTITION
+FREE= FREE SPACE
+
+fdisk -l  ==========list all disk
+fdisk /dev/sda  =========for ex here we chosed /dev/sda disk
+press m to see all the options
+now press n for new partition creating
+now chosing to create primary or extended partition selet e extended
+now select sector of new partitoon press enter and for last secort press enter
+now give size in GB or MB or TB based on the size of the disk 
+now press t to chnage partation id 
+we use 8e for linux lvm or to swap id
+after changing the id press p print the detail of the partation
+now making filesystem formated
+mkfs /dev/sda/1
+mkfs -t ext4 /dev/sda1
+blkid /dev/sda1   will give uuid
+
+
+Different type of disks will be having different initials in Linux 
+̓ IDE drive will be shown as /dev/hda ̓ 
+SCSI drive will be shown as /dev/sda ̓ 
+Virtual drive will be shown as /dev/vda
+
+̓ /etc/mtab is a file which stores the information of all the currently mounted file 
+systems; it is dynamic and keeps changing.
+̓ /etc/fstab is the file which is keeps information about the permanent mount point.
+
+
+Device Name                                      Mount Point      Type of FS     Mount options       Dumping Check        Sequence
+UUID=363f050f-466c-40fc-83bb-476e00b574c5          swap                    swap    defaults                    0            0
+
+
+Sometimes a directory reflects error while unmouting, the possible causes for it are 
+̓ You are in the same directory and trying to unmount it. Check with pwd command
+̓ Some users are present in the directory and using the contents in it.
+ Check with fuser –cu /dev/sda7
+Check for the files which are open with lsof /dev/sda7
+
+
+Assigning label to the partition:
+Assigning the label is giving some name to the partition. To assign label to the partition e2label
+command is used 
+Syntax 
+
+ Check with fuser –cu /dev/sda7
+#e2label <partition name> <label> 
+To check the label 
+#e2label /dev/sda7 ktdisk #e2label /dev/sda7
+
+
+Types of users In Linux and their attributes: 
+TYPE EXAMPLE USER ID (UID) GROUP ID
+(GID) 
+HOME 
+DIRECTORY
+SHELL
+
+Super User Root 0 0 /root /bin/bash
+System User ftp, ssh,apache nobody    1 to 499 1 to 499 /var/ftp , etc /sbin/nologin
+Normal User Visitor, ktuser,etc     500 to 60000 500 to 60000 /home/username   /bin/bash
+
+⮘ -l to change login name ⵸ -L to LOCK account ⮘ -U to UNLOCK account ̓
+ ex. # usermod -l newname oldname (changing the name of the user)
+̓ ex. # usermod -L newname to lock the user account
+̓ ex. # usermod -U newname to unlock the user account
+
+chage -l sam======will display ther fields
+chnage sam===========used to chnage the filed
+
+
+  -m for Min password age
+-M for max password age 
+  -d for last time the password is changed.
+  -W Password expiration warnings
+  -I Password inactive [-1 means inactive].
+  -E A/C expiration date
+
+
+[root@localhost home]# chage -l sam
+Last password change                                    : Mar 29, 2021
+Password expires                                        : never
+Password inactive                                       : never
+Account expires                                         : never
+Minimum number of days between password change          : 0
+Maximum number of days between password change          : 99999
+Number of days of warning before password expires       : 7
+
+
+#userdel <username> it will only delete the user but home directory will be there. To delete 
+the user with its home directory use the following command.
+
+
+userdel -r sam
+usermod -G groupname user name===adding user to the group 
+
+groupadd=======================
+
+#groupadd -g 595 ktgroup
+groupmod option argument groupname
+The options are 
+-o
+-n
+to change the group id
+to override the previous assigned id, if it matches with the new one. 
+to change the group name
+
+groupmod -g 600 ibm
+groupmod -n newname oldname
+
+gpasswd Options:
+-M  to add multiple user  gpasswd -M sam raj kws rhohan IBM
+-a   to add single user    gpasswd -a raj1 IBM
+-d removing a user from a group  gpasswd -d sam IBM
+
+ SUID – SET USER ID  SGID – SET GROUP ID ̓ STICKY BITPermission Symbolic Form Numeric Form Syntax
+SETUID s or S 4 #chmod u+s or #chmod 4766
+SETGID s or S 2 #chmod g+s or #chmod 2766
+STICKY BIT t or T 1 #chmod o+t or chmod 1766
+Note: Where s= setuid + execute permission and S= setuid only. Same is for SGID and also for 
+sticky bit .
+
+
+ACL
+
+Define more fine-grained discretionary access rights for files and directories.
+̓ Often, you want to share files among certain groups and specific users. It is a good practice 
+to designate a directory for that purpose. You want to allow those groups and users to read, 
+and write files in that directory, as well as create new files into the directory. Such special 
+permissions can be given using ACL.
+̓ ACL can be applied on ACL enabled partition that means you need to enable ACL while 
+mounting the partition.
+
+
+Steps to implement ACL 
+̓ Create a partition and format it with ext4 file system
+̓ Mount a file system with ACL
+̓ Apply ACL on it.
+ Mount it with ACL option
+ #mount –o acl /dev/sda7 /ktdir
+ If your partition already exists, then just add an acl after defaults as shown above and use    defaults,acl
+the following command.
+ #mount –o remount /dev/sda7
+
+ #setfacl <option> < argument > < file or directory name > ̓ The options are, ̓
+ -m Modifies an ACL
+̓ -x Removes an ACL
+-R Recurses into subdirectories
+
+ The possible arguments are ̓
+ u: user ̓ 
+ g: group ̓
+ o: others
+ 
+ #setfacl –m u: <username>: <permissions> <file or dir name>
+ #setfacl –m g:<group name>:<permissions> <file or directory name>
+ 
+ #setfacl –m g:ktgroup:rwx /ktdir
+ #setfacl –m u:ktuser:rx,g:ktgroup:rx /ktdir
+  #setfacl –x u:ktuser /ktdir-----------for removing user
+ #setfacl –x g: ktgroup /ktdir--------------for removing group 
+ #setfacl –b /ktdir----removing all permisions
+ 
+ 
+ 
+ NETWORK:::::::::::::::::::::
+ 
+ 
+ NIC (Network Interface Controller or Card) 
+A network interface controller (also known as a network interface card, network adapter, 
+LAN adapter and by similar terms) is a computer hardware component that connects a 
+computer to a computer network. Each NIC will be having a unique MAC addresses (Media 
+Access Control address) to avoid conflicts between same NIC adapters. In Linux these NIC 
+adapter is represented by the word “eth”. Example if there are two Ethernet adapters in the 
+system then it will be denoted as eth0, eth1, etc. 
+
+2. Media 
+Media is the medium via which two different computer’s NIC card will be connected. The 
+best example for media is Cable. Example RJ 45, CAT 5 etc. 
+
+3. Topology
+Topology is the scheme or design in which the computers in the network will be connected 
+to each other. Example for topology is Bus, Ring, star, mesh, tree topologies.
+
+Protocol
+A network protocol defines rules and conventions for communication between network 
+devices
+
+
+Example for Protocols are TCP/IP (Transmission Control Protocol), UDP (User Datagram 
+Protocol), HTTP. The most widely and regularly used protocols for transferring data are TCP 
+and UDP. Let’s analyze some basic differences between TCP/IP and UDP. 
+TCP/IP                                                                                              UDP
+
+Transmission Control Protocol                                                            User Datagram Protocol 
+It is connection Oriented                                                                    Connectionless 
+Reliable                                                                                        Non-Reliable 
+TCP Acknowledgement will be sent/received                                                No Acknowledgement for UDP 
+Slow Communication                                                                           Faster Communication 
+Protocol Number for TCP is 6                                                             Protocol Number for UDP is 17
+HTTP, FTP, SMTP uses TCP                                                                       DNS, DHCP uses UDP
+
+#/etc/sysconfig/network is a file which keeps the information about the hostname assigned to the system.
+#/etc/hosts a file which is responsible for resolving hostname into IP locally, in other word it acts as local DNS if DNS server is not accessible.
+#/etc/resolv.conf is a file which keeps the address of DNS server to which the clients will be accessing to resolve IP to hostname and hostname to IP.
+
+
+==================================================
+
+LDAP
+
+light weight directory access protocol
+port no 389
+
+netstat -antup | grep -i 389 it will show the port listing sladp
+ 
+ basically it is directory server, contains object like users and groups
+ it will act as a centralized repository server for authentication purpose to entire organisation 
+ DNS is mandatory for LDAP 
+ LAM is important package to create user and group account,its a free package
+ configure dns must
+ install openldap* nss* pam_ldap* php* httpd*
+ #updatedb--------execute this
+ #locate slapd.conf
+ we get 
+#  cp /usr/share/openladp-servers/slapd.conf.obsolate  /slapd.conf
+# slappasswd===========to genetare password  genetare encrypeted password copy that 
+# vi /slapd.conf====open the config file we can see schema lines dont touch that, if we chnaged thie include schema file complete ldap will get corrupted
+
+come down===WE can see #enable server status monitoring (cn=moniotr)
+here we can see dc=my domain edit it and give dc=<domain name of ldap server >
+
+next below we can see ====suffix "dc=domainname,dc=com"    here edit and give dc=<server domain name>
+next below we see =====rootdn "cn=manager,dc=domainname,dc=com"   here edit and give dc=<server domain name>
+next below =====rootdn  type rootpw  and paste our encrypted password which we generated using slappasswd
+
+now save and exit
+
+now go to cd /etc/openldap/slapd.d ; ls
+we see cn=config   cn=config.ldif     remove both the files rm -rf *
+next rm -rf /var/lib/ldap/*
+#locate DB_CONFIG          WE get /usr/share/openldap-servers/DB_CONFIG.example
+#cp /usr/share/openldap-servers/DB_CONFIG.example /var/lib/ldap/DB_CONFIG
+# chmod -R ldap:ldap /etc/openldap/slapd.d
+# chmod -R ldap:ldap /var/lib/ldap
+# now if we give ls we see no files under slapd.d   
+# slaptest -f /slapd.conf -F /etc/openldap/slapd.d
+
+after executing the above command we see some error no need to worry bu the same time we see new files created under /slapd.d   cn=config cn=config.ldif
+
+again execute the permission command its mandatory
+
+# chmod -R ldap:ldap /etc/openldap/slapd.d
+# chmod -R ldap:ldap /var/lib/ldap
+
+#service slapd start
+now if you execute slaptest it will give successfull
+
+# slaptest -f /slapd.conf -F /etc/openldap/slapd.d
+# service httpd start
+
+now going ot set LAM setup
+
+already we stored LAM rpm packge (from google we downloaded lam package)
+using rpm -ivh install the package 
+
+go to any browser and type http://192.168.159.28/lam    ip of the ldapserver it will open ldap lam page 
+
+now we cant able to log in we need to configure lam to the ldap server 
+in the right side of the opened page we can see lam configuration click that now it will open click edit server profiles give the password same "lam"
+
+
+we can see servers address tab give ldap ip 
+server address ldap://192.168.159.28:389
+tree suffix  dc=<domainname of ldap>,dc=com        scroll dow we can see security setting 
+
+in security setting we see list of valid users 
+
+list of valid users   cn=manager dc=<domainname of the ldap server>,dc=com
+
+then go to account types tab on tob of the page, in this account type page we see groups and user section
+chnage on both with the below content
+
+ldap suffix ou=people,dc=<domainname of ldap server>,dc=com
+
+
+now click save button once you clicked we can see your setting were successfully saved
+
+if we get error please cehck firewall and selinux 
+now we can login with the generated password 
+
+now we can see group and user tab we can click those and add new group and user and we can join
+
+
+now ldap server side config done
+
+
+============================================================================
+
+client side config
+configre dns and start vsftpd 
+#yum install openldap* nss* pam_ldap*
+# setup    type setup command
+we can see authentication configuration click that 
+we see useLDAP and use ldap authentication   enable both of this using * symbol and click next
+give server :  ldap://<ldap serverIP>/  then base dn : dc=<ldap domain name>,dc=com
+press ok then quit
+#authconfig --enablemkhomedir --update   ======it will create the home directory of the user
+
+
+now try to log in the client server which we created on the LDAP 
+
+
+
+
+Configure LDAP Server & Client With AutoFS in RHEL 7:
+=====================================================
+
+LDAP stands for Lightweight Directory Access Protocol. It’s an open protocol for accessing and maintaining distributed directory information services over an IP network (source wikipedia).
+
+Here it is used to facilitate user account administration. Instead of storing user accounts locally on each server, the LDAP directory stores them globally and makes them available to a group of servers.
+
+This tutorial doesn’t explain how to set up the Automounter and the NFS services. It has been tested for RHEL 7.0, RHEL 7.1 and RHEL 7.2 (non-patched versions).
+
+During this tutorial, try to follow the instructions very precisely because LDAP syntax is sometimes cumbersome (case sensitive, space, etc) and prone to errors (dn/dc/cn).
+
+Let’s assume that we use the example.com domain and the instructor.example.com hostname (this hostname should be resolved either by the /etc/hosts file or by DNS).
+
+Installation Procedure
+
+LDAP Server Configuration: (192.168.1.113)
+------------------------------------------
+port number 
+
+ldap            389/udp
+ldaps           636/tcp  
+
+# yum install -y openldap openldap-clients openldap-servers migrationtools
+
+# slappasswd -s redhat -n > /etc/openldap/passwd============generated encrypted password and store in the given file 
+
+# openssl req -new -x509 -nodes -out /etc/openldap/certs/cert.pem -keyout /etc/openldap/certs/priv.pem -days 365=======generating certificate using openssl commadn 
+
+# cd /etc/openldap/certs
+
+# chown ldap:ldap *
+
+# chmod 600 priv.pem
+
+Prepare the LDAP database:
+# cp /usr/share/openldap-servers/DB_CONFIG.example /var/lib/ldap/DB_CONFIG
+
+Generate database files (don’t worry about error messages!):
+# slaptest
+
+Change LDAP database ownership:
+# chown ldap:ldap /var/lib/ldap/*
+
+# systemctl enable slapd
+
+# systemctl start slapd
+
+Check the LDAP activity:
+# netstat -lt | grep ldap
+
+To start the configuration of the LDAP server, add the cosine & nis LDAP schemas:
+		
+# cd /etc/openldap/schema
+
+# ldapadd -Y EXTERNAL -H ldapi:/// -D "cn=config" -f cosine.ldif
+
+# ldapadd -Y EXTERNAL -H ldapi:/// -D "cn=config" -f nis.ldif
+
+Then, create the /etc/openldap/changes.ldif file and paste the following lines (replace PASSWORD with the previously created password like {SSHA}l8A+0c+lRcymtWuIFbbc3EJ1PRZz9mGg ):
+
+# vim /etc/openldap/changes.ldif
+
+dn: olcDatabase={2}hdb,cn=config
+changetype: modify
+replace: olcSuffix
+olcSuffix: dc=example,dc=com
+
+dn: olcDatabase={2}hdb,cn=config
+changetype: modify
+replace: olcRootDN
+olcRootDN: cn=Manager,dc=example,dc=com
+
+dn: olcDatabase={2}hdb,cn=config
+changetype: modify
+replace: olcRootPW
+olcRootPW: PASSWORD==========replace thi password with our generated passwd
+
+
+
+Send the new configuration to the slapd server:
+
+# ldapmodify -Y EXTERNAL -H ldapi:/// -f /etc/openldap/changes.ldif
+
+Create the /etc/openldap/base.ldif file and paste the following lines:
+
+# vim /etc/openldap/base.ldif
+
+dn: dc=example,dc=com
+dc: example
+objectClass: top
+objectClass: domain
+
+dn: ou=People,dc=example,dc=com
+ou: People
+objectClass: top
+objectClass: organizationalUnit
+
+dn: ou=Group,dc=example,dc=com
+ou: Group
+objectClass: top
+objectClass: organizationalUnit
+
+Build the structure of the directory service:
+
+# ldapadd -x -w redhat -D cn=Manager,dc=example,dc=com -f /etc/openldap/base.ldif
+
+Create two users for testing:
+
+# mkdir /home/guests
+# useradd -d /home/guests/ldapuser01 ldapuser01
+# passwd ldapuser01
+Changing password for user ldapuser01.
+New password: user01ldap
+Retype new password: user01ldap
+passwd: all authentication tokens updated successfully.
+# useradd -d /home/guests/ldapuser02 ldapuser02
+# passwd ldapuser02
+Changing password for user ldapuser02.
+New password: user02ldap
+Retype new password: user02ldap
+passwd: all authentication tokens updated successfully.
+User Account Migration
+Go to the directory for the migration of the user accounts:
+
+# cd /usr/share/migrationtools
+Edit the migrate_common.ph file and replace in the following lines:
+# vim migrate_common.ph 
+$DEFAULT_MAIL_DOMAIN = "example.com";
+$DEFAULT_BASE = "dc=example,dc=com";
+Create the current users in the directory service:
+
+# grep ":10[0-9][0-9]" /etc/passwd > passwd
+# ./migrate_passwd.pl passwd users.ldif
+# ldapadd -x -w redhat -D cn=Manager,dc=example,dc=com -f users.ldif
+adding new entry "uid=ldapuser01,ou=People,dc=example,dc=com"
+adding new entry "uid=ldapuser02,ou=People,dc=example,dc=com"
+# grep ":10[0-9][0-9]" /etc/group > group
+# ./migrate_group.pl group groups.ldif
+# ldapadd -x -w redhat -D cn=Manager,dc=example,dc=com -f groups.ldif
+adding new entry "cn=ldapuser01,ou=Group,dc=example,dc=com"
+adding new entry "cn=ldapuser02,ou=Group,dc=example,dc=com"
+Test the configuration with the user called ldapuser01:
+
+# ldapsearch -x cn=ldapuser01 -b dc=example,dc=com
+Firewall Configuration
+Add a new service to the firewall (ldap: port tcp 389):
+
+# firewall-cmd --permanent --add-service=ldap
+Reload the firewall configuration:
+
+# firewall-cmd --reload
+Edit the /etc/rsyslog.conf file and add the following line:
+
+local4.* /var/log/ldap.log
+Restart the rsyslog service:
+
+# firewall-cmd --add-service={nfs3,mountd,rpc-bind} --permanent 
+
+# systemctl restart rsyslog
+
+-----
+Configure & Configure NFS:
+
+# yum install -y nfs* rpcbind mountd
+# vim /etc/exports
+/home *(rw,sync)
+
+Start & Enable the Services:
+
+# systemctl start rpcbind
+# systemctl start nfs
+# systemctl enable rpcbind
+# systemctl enable nfs
+
+Test NFS Configuration:
+# showmount -e
+
+=================
+
+Client Configuration:
+---------------------
+Install the packages:
+# yum install -y openldap-clients nss-pam-ldapd autofs
+
+Setup Authentication Mechanism:
+# authconfig-tui
+Select LDAP & LDAP Authenication
+
+# vim /etc/auto.master
+/home /etc/auto.txt  --timeout=60
+
+# vim /etc/auto.txt
+home/guests  -rw,sync  192.168.1.113:/home
+
+# systemctl start autofs
+
+# systemctl enable autofs
+
+# systemctl status autofs
+
+==================================================================================================================================================
+
+DHCP Server Configuration in Linux Step By Step Procedure:
+---------------
+1. Login as root user and configure yum repository. If you don't know how to configure it then click below link to watch the videos:
+Yum configuration in RHEL 7:
+https://www.youtube.com/watch?v=-N09W...​
+
+Yum configuration in RHEL 8:
+https://www.youtube.com/watch?v=cXqL5...​
+
+2. Set the Static IP Address in your server.
+#nmtui​
+OR
+# vim /etc/sysconfig/network-script/ifcfg-ens33
+
+3. Install DHCP Packages from local yum repo.
+# yum install -y dhcp*
+port 67
+
+4. Make proper changes in configuration (dhcpd.conf) file as per your requirements. You can also set static IP Addresses with it.
+ # vim /etc/dhcp/dhcpd.conf
+ if we open the above file we see file path mentioned below copy from /usr/share/doc/dhcp-server/dhcpd.conf.example to the above file 
+ 
+ #
+# DHCP Server Configuration file.
+#   see /usr/share/doc/dhcp-server/dhcpd.conf.example
+#   see dhcpd.conf(5) man page
+#
+
+# A slightly different configuration for an internal subnet.
+subnet 10.5.5.0 netmask 255.255.255.224 {============================give subnet and netmask,  it should be 0 in the subnet 
+  range 10.5.5.26 10.5.5.30;=========================================give ip range from start to end here from 26 to 30 they gave
+  option domain-name-servers ns1.internal.example.org;-==============if we use domanin we can use it or else comment it
+  option domain-name "internal.example.org";===================if we use domanin we can use it or else comment it
+  option routers 10.5.5.1;=====================================if we use router we can use it or else comment it
+  option broadcast-address 10.5.5.31;=============if  we can use it or else comment it
+  default-lease-time 600;
+  max-lease-time 7200;for every 7200 min it will chnage the ip as dhcp it is 
+
+
+in dhcp we can set permanent ip for example printer, untill we change the ip it wont change and ip should be in dhcp range
+
+# Fixed IP addresses can also be specified for hosts.   These addresses
+# should not also be listed as being available for dynamic assignment.
+# Hosts for which fixed IP addresses have been specified can boot using
+# BOOTP or DHCP.   Hosts for which no fixed address is specified can only
+# be booted with DHCP, unless there is an address range on the subnet
+# to which a BOOTP client is connected which has the dynamic-bootp flag
+# set.
+host fantasia {========================give host name of the server 
+  hardware ethernet 08:00:07:26:c0:a5;===========give hardware or  mac address in ifconfig  ether 00:0c:29:b1:6d:83 we can get 
+  fixed-address fantasia.example.com;==============here we give ip  like this we give  fixed-address 192.168.120.160;
+
+
+
+5. Start and enable DHCP service.
+# systemctl start dhcpd
+# systemctl enable dhcpd
+
+Check the status of service if required.
+# systemctl status dhcpd
+
+6. Now test the configuration, login to client machine and restart the network manager.
+# systemctl restart NetworkManager
+
+7.Check the IP Address, which should be in range of configuration settings you have made in dhcpd.conf file.
+
+You are done.
+
+=======================================================================================================================================================
+
+Domain Name Server Configuration in RHEL 8 (CentOS 8):
+======
+DNS is a service that helps to resolve a fully qualified domain name (FQDN) into an IP address and additionally, perform a reverse translation- translation of an IP address to a user-friendly domain name.
+
+Step 1: Install bind DNS packages.
+# dnf install bind bind-utils
+
+Start the DNS server using the command below:
+# systemctl start named
+
+Next, enable it so that it can kick in even after a reboot
+# systemctl enable named
+
+Just to be sure that the service is running as expected, check its status
+# systemctl status named
+
+Step 2:  Configure bind DNS server
+Let’s take a backup of the config file  /etc/named.conf
+# cp /etc/named.conf  /etc/named.bak
+
+Now go ahead and open the file using your preferred text editor.
+# vim /etc/named.conf
+
+Under the ‘Options’  section, ensure you comment out the lines indicated below to enable the Bind DNS server to listen to all IPs.
+
+// listen-on port 53 { 127.0.0.1; };==================before editing (// or # is same) it wont be there we commented this
+// listen-on-v6 port 53 { ::1; };==================before editing (// or # is same) it wont be there we commented this
+
+Additionally, locate the allow-query parameter and adjust it according to your network subnet.
+
+allow-query { localhost; 192.168.1.0/24; };=========before it was allow-query { localhost; }; then we added our network and subnetmask
+
+This setting allows only the hosts in the defined network to access the DNS server and not just any other host.
+
+To define the reverse and forward lookup zones, copy and paste the following configuration at the end of /etc/named.conf
+
+//forward zone
+zone "nehraclasses.local" IN {===================given domain name nehraclasses.local
+     type master;
+     file "nehraclasses.local.db";
+     allow-update { none; };
+     allow-query { any; };
+};
+
+//backward zone
+zone "1.168.192.in-addr.arpa" IN {
+     type master;
+     file "nehraclasses.local.rev";
+     allow-update { none; };
+     allow-query { any; };
+};
+
+Step 3: Create a forward DNS zone file for the domain
+
+# vim /var/named/nehraclasses.local.db
+$TTL 86400
+@ IN SOA primary-dns.nehraclasses.local. admin.nehraclasses.local. (============here we give fqdn and domain name 
+                                                2020011800 ;Serial
+                                                3600 ;Refresh
+                                                1800 ;Retry
+                                                604800 ;Expire
+                                                86400 ;Minimum TTL
+)
+
+;Name Server Information
+@ IN NS primary-dns.nehraclasses.local.
+
+;IP Address for Name Server
+primary-dns IN A 192.168.1.115
+
+;Mail Server MX (Mail exchanger) Record
+nehraclasses.local. IN MX 10 mail.nehraclasses.local.
+
+;A Record for the following Host name
+www  IN   A   192.168.1.50
+mail IN   A   192.168.1.60
+
+;CNAME Record
+ftp  IN   CNAME www.nehraclasses.local.
+
+
+Step 4: Create a reverse DNS zone file for the domain
+
+# vim /var/named/nehraclasses.local.rev
+$TTL 86400
+@ IN SOA primary-dns.nehraclasses.local. admin.nehraclasses.local. (
+                                            2020011800 ;Serial
+                                            3600 ;Refresh
+                                            1800 ;Retry
+                                            604800 ;Expire
+                                            86400 ;Minimum TTL
+)
+;Name Server Information
+@ IN NS primary-dns.nehraclasses.local.
+primary-dns     IN      A       192.168.1.115
+
+;Reverse lookup for Name Server
+35 IN PTR primary-dns.nehraclasses.local.
+
+;PTR Record IP address to Hostname
+50      IN      PTR     www.nehraclasses.local
+60      IN      PTR     mail.nehraclasses.local
+
+Next, assign the necessary file permissions to the two configuration files.
+# chown named:named /var/named/nehraclasses.local.db
+# chown named:named /var/named/nehraclasses.local.rev
+
+To confirm that the DNS zone lookup files are free from any syntactical errors, run the commands shown:
+
+# named-checkconf
+# named-checkzone nehraclasses.local /var/named/nehraclasses.local.db
+# named-checkzone 192.168.1.115 /var/named/nehraclasses.local.rev
+
+For the changes to be reflected in the system, restart the Bind DNS server
+
+# systemctl restart named
+
+Add Firewall Rule.
+
+# firewall-cmd  --add-service=dns --zone=public  --permanent
+# firewall-cmd --reload
+
+Step 5: Test the Bind DNS server from a client system
+
+# vim /etc/resolv.conf
+nameserver 192.168.1.115
+
+# vim /etc/sysconfig/networkk-scripts/ifcfg-ens033
+DNS=192.168.1.115
+
+# systemctl restart NetworkManager
+
+Using the nslookup command test the Bind DNS server as shown:
+
+# nslookup primary-dns.nehraclasses.local
+# nslookup mail.nehraclasses.local
+# nslookup www.nehraclasses.local
+# nslookup ftp.nehraclasses.local
+# nslookup 192.168.1.115
+
+
+The output from the nslookup command confirms that the forward DNS lookup is working as expected.
+
+Moreover, you can also use the dig command as shown
+
+# dig primary-dns.nehraclasses.local
+
+To perform a reverse DNS lookup, use the dig command as shown:
+
+# dig -x 192.168.1.115
+
+Perfect! The reverse DNS lookup is also working as we would expect.
+
+LVM
+
+
+#pvcreate /dev/sda7
+#vgcreate ktvg /dev/sda7
+#lvcreate –L 300M –n ktlv ktvg
+#mkfs.ext4 /dev/ktvg/ktlv
+#mount /dev/ktvg/ktlv /ktdir
+#lvextend –L +200M /dev/ktvg/ktlv
+#resize2fs /dev/ktvg/ktlv
+
+Reducing the size of an LV
+
+Reducing the size of an LV
+ Reducing the size of an LV is a bit complicated task, there are few things which you need to 
+keep in mind before reducing the size of an LV.
+ LV size cannot be reduced online, it requires a down time i.e. unmounting the file 
+system.
+ Organized the data before reducing the size of LV.  Update the file system about the size. I.e. what its size will be after reduction.  Finally reduce the size. Huh….! Lots of things to do!!!!
+
+#umount /data
+#e2fsck -f /dev/ktvg/ktlv.
+#resize2fs /dev/ktvg/ktlv 300M
+#lvreduce -L -200M /dev/ktvg/ktlv     (where 300M is the approximate total size of LV after reduction)
+
+
+Moving or Migrating the LV (data) from one pv to another.
+
+̓ The Steps to migrate the PV are ̓ Access the mount point of failing PV and check the data in it,
+̓ Verify the size of the PV by pvs command or pvdisplay command.
+̓ Unmount the file system on that PV. ̓ Add new PV, which should be of the same size or higher than that of the replacing
+PV to the volume group. 
+̓ Migrate the PVs contents to the new PV using following command
+̓ #pvmove <Old PV> <New PV> ̓ Mount back the LV, access the mount point and verify the data in it.
+̓ Remove the faulty PV from Volume Group.
+Okay! So let’s do the practical following above steps.
+
+#vgdisplay
+
+ Okay, now then we know the size of PE is 16, lets calculate how many LE is required to 
+create an LV of 400 MB. ̓ The formula for calculating no. of LE is<size of LV required, in MB> divided by Size of PE 
+400/16 = 25
+
+̓ If the size of LV is to be 2 GB then first we need to convert GB into MB and then calculate 
+2x1024 / 16 =128. ̓ You can use #bc command to do all the calculations. Use ctrl+d or Ctrl+c to quit the
+
+use bc  commadn to calculate 
+
+[root@localhost sam]# bc
+bc 1.07.1
+Copyright 1991-1994, 1997, 1998, 2000, 2004, 2006, 2008, 2012-2017 Free Software Foundation, Inc.
+This is free software with ABSOLUTELY NO WARRANTY.
+For details type `warranty'.
+400/16
+25
+2*1024
+2048
+2048/16
+128
+
+
+
+
+#lvcreate –l 25 –n ktlv2 ktvg2
+ 
+  
+  
+  ===============================================================================================================
+  
+  How to clean /boot in RHEL 7/8? & How To Remove Old Kernels From Server:
+-----------------------------------------------------------------------------------------------------
+
+a) If /boot is showing low space available check its contents.
+b) Sometimes due to patching the older kerneles mighth be consuming space in it.
+
+1. List the old kernels in your system.
+# rpm -q kernel  (checks which kernels are instaled on your system)
+kernel-2.6.32-279.el6.x86_64
+
+kernel-2.6.32-279.2.1.el6.x86_64
+kernel-2.6.32-279.5.2.el6.x86_64
+kernel-2.6.32-279.9.1.el6.x86_64
+
+OR
+
+# rpm -qa | grep kernel
+
+2. Check the latest default kernel with which your system boots up.
+# uname -a
+
+3. Remove the all old kernels from the system except the current default and 1 old. You should atleast keep one previous kernel safe for safety purpose of your server.
+# yum remove kernel-2.6.32-279.el6.x86_64     (removes the oldest kernel safely)
+
+4. Recheck and list the remaining kernel is the server.
+# rpm -qa | grep kernel
+
+Thats All, You have successfully removed the old kernels from your server.
+  
+
+KERNAL patching:::::::::
+
+kpatch is a feature of the Linux kernel that implements live patching of a running kernel,
+ which allows kernel patches to be applied while the kernel is still running. ... 
+ At the same time, kpatch allows kernel-related security updates to be applied without deferring them to scheduled downtimes.
+
+KERNAL paramter:::
+
+All the kernel settings are stored in a large selection of files under the /proc/sys directory. 
+The parameters stored in this directory are often referred to as “system parameters“
+Run the ipcs -l command.
+Analyze the output to determine if there are any necessary changes required for your system. ...
+To modify these kernel parameters, edit the /etc/sysctl. ...
+Run sysctl with -p parameter to load in sysctl settings from the default file /etc/sysctl.conf:
+
+shared memory MAX and shared memory minimum 
+
+# sysctl kernel.shmmax=========================to list particular
+kernel.shmmax = 68719476736
+
+# sysctl -a | more-============================sysctl -a command displays kernel parameters, which can be adjusted at runtime and at boot time.
+kernel.sched_child_runs_first = 0
+kernel.sched_min_granularity_ns = 4000000
+kernel.sched_latency_ns = 20000000
+kernel.sched_wakeup_granularity_ns = 4000000
+kernel.sched_tunable_scaling = 1
+
+# sysctl -w kernel.sysrq=0=======================to chnage kernal parameter immediately 
+kernel.sysrq = 0
+
+grep -v ^# /etc/sysctl.conf============config file kernal 
+net.ipv4.ip_forward = 0
+net.ipv4.conf.default.rp_filter = 1
+net.ipv4.conf.default.accept_source_route = 0
+kernel.sysrq = 0
+
+============================================================================================================================================
+
+
+PXE------PRE BOOT EXECUTION ENVIRONMENT
+
+needed 
+  http server
+  tftp server
+  dhcp server
+  yum should be configured
+  selinux  iptables should be disabled
+  boot the client with dhcp along with bootp
+  
+  
+  #yum -y install httpd xinted syslinux tftp-server dhcp*
+  #mkdir /var/www/rhel============================================http  
+  #cp /mnt/* /var/www/rhel==========here under mnt we mounted rhel cd and copying all the packages under /var/www/rhel
+  #chmod -R 755 /var/www/rhel
+  #cp /usr/share/syslinux/* /var/lib/tftpboot/======= while installing the packages  tftp-server it will get created
+  #mkdir -p /var/lib/tftpboot/pxelinux.cfg
+  #mkdir -p /var/lib/tftpboot/networkboot/centos/7/x86_64
+  #cp /mnt/images/pxeboot/vmlinuz   /var/lib/tftpboot/pxelinux.cfg                             ##copying kernel:
+  #cp /mnt/images/pxeboot/initrd.img  /var/lib/tftpboot/pxelinux.cfg               ##copying initial ram disk:
+  
+  
+  ======================================================================================================================
+  ======================================================================================================================
+  =====================================================================================================================
+  
+  bios boot disk check for os locating place etc cd or pendrive or harddisk
+MBR master boot recorder have 446 boot info 64 partation table 2 validationcehck
+446 boot info will read grub/grub.conf file and came to know where the bootable disk present  have info of kernel and initramdisk
+load kernel and initram disk
+init ramdisk will use root as tmp dirctory 
+
+[root@samraj kernel]# pwd
+/proc/sys/kernel======================all kernal parameters stored under this
+[root@samraj kernel]#
+
+
+uname -r===gives kernal version
+cd /boot under this you will see vmlinuz-2.6.32-358.el6.x86_64 is the kernale file
+
+[root@samraj boot]# uname -r
+2.6.32-358.el6.x86_64
+[root@samraj boot]# ls -l | grep -i vm*
+-rwxr-xr-x. 1 root root  4044560 Jan 29  2013 vmlinuz-2.6.32-358.el6.x86_64
+[root@samraj boot]#
+
+
+grep -r 'allow="127' /opt/tomcat/====to check allow=127 under all the files comes under /opt/tomcat 
+
+iostat generates CPU, I/O statistics
+mpstat displays CPU statistics.
+pidstat reports statistics based on the process id (PID)
+nfsiostat displays NFS I/O statistics.
+cifsiostat generates CIFS statistics.
+
+dmidecode -t will lsist all the option for ex select system will show the machine is physical or virtual
+
+getfacl -R * > back=====will collect all the file info for particular directory in back file which we created
+[root@localhost ~]# chmod 600 ldap
+[root@localhost ~]# chmod 600 sam.dump
+[root@localhost ~]# setfacl --restore=back======it will restore the same permission from back file whihc we stored eariler
+
+ cp -p sam.dump{,.bak`date +%d%m%y`}=====will copy the file with same permission "," same with the same file name and date month year
+
+[root@localhost ~]# netstat -antulp | grep :22  to check listen port 
+tcp        0      0 0.0.0.0:22                  0.0.0.0:*                   LISTEN      3146/sshd
+tcp        0      0 192.168.1.7:22              192.168.1.12:51733          ESTABLISHED 2516/sshd
+tcp        0      0 :::22                       :::*                        LISTEN      3146/sshd
+[root@localhost ~]# netstat -antulp | grep -i LISTEN
+tcp        0      0 0.0.0.0:111                 0.0.0.0:*                   LISTEN      1437/rpcbind
+tcp        0      0 0.0.0.0:52881               0.0.0.0:*                   LISTEN      1557/rpc.statd
+tcp        0      0 0.0.0.0:22                  0.0.0.0:*                   LISTEN      3146/sshd
+tcp        0      0 127.0.0.1:631               0.0.0.0:*                   LISTEN      1632/cupsd
+tcp        0      0 127.0.0.1:25                0.0.0.0:*                   LISTEN      2032/master
+tcp        0      0 0.0.0.0:514                 0.0.0.0:*                   LISTEN      2894/rsyslogd
+tcp        0      0 0.0.0.0:3306                0.0.0.0:*                   LISTEN      1931/mysqld
+tcp        0      0 :::111                      :::*                        LISTEN      1437/rpcbind
+tcp        0      0 :::22                       :::*                        LISTEN      3146/sshd
+tcp        0      0 ::1:631                     :::*                        LISTEN      1632/cupsd
+tcp        0      0 ::1:25                      :::*                        LISTEN      2032/master
+tcp        0      0 :::60125                    :::*                        LISTEN      1557/rpc.statd
+tcp        0      0 :::514                      :::*                        LISTEN      2894/rsyslogd
+
+[root@localhost ~]# netstat -antu============to check listening port from other server 
+Active Internet connections (servers and established)
+Proto Recv-Q Send-Q Local Address               Foreign Address             State
+tcp        0      0 0.0.0.0:111                 0.0.0.0:*                   LISTEN
+tcp        0      0 0.0.0.0:52881               0.0.0.0:*                   LISTEN
+tcp        0      0 0.0.0.0:22                  0.0.0.0:*                   LISTEN
+tcp        0      0 127.0.0.1:631               0.0.0.0:*                   LISTEN
+tcp        0      0 127.0.0.1:25                0.0.0.0:*                   LISTEN
+tcp        0      0 0.0.0.0:514                 0.0.0.0:*                   LISTEN
+tcp        0      0 0.0.0.0:3306                0.0.0.0:*                   LISTEN
+tcp        0      0 192.168.1.7:514             192.168.1.26:52045          ESTABLISHED====connected from other server
+tcp        0      0 192.168.1.7:22              192.168.1.12:51733          ESTABLISHED====connected from other server 
+
+
+
+journaling
+
+journaling is the main difference between ext2 and ext3
+if we use vi on the system and if we did int saved it will swipe of but by journaling it wont get deleted or removed it will be saved in the same path
+created file in the name raj and closed the session with our
+-rw-------   1 root root 12288 Aug 28 12:00 .raj.swp
+
+again vi raj
+
+E325: ATTENTION
+Found a swap file by the name ".raj.swp"
+          owned by: root   dated: Tue Aug 28 12:00:39 2018
+         file name: ~root/raj
+          modified: YES
+         user name: root   host name: localhost.localdomain
+        process ID: 25649
+While opening file "raj"
+
+(1) Another program may be editing the same file.  If this is the case,
+    be careful not to end up with two different instances of the same
+    file when making changes.  Quit, or continue with caution.
+(2) An edit session for this file crashed.
+    If this is the case, use ":recover" or "vim -r raj"
+    to recover the changes (see ":help recovery").
+    If you did this already, delete the swap file ".raj.swp"
+    to avoid this message.
+"raj" [New File]
+Press ENTER or type command to continue
+
+
+use "vim -r raj"  === to restore it
+
+
+The first 512 bytes (Cyl 0, Sec 1) of the disk has 
+
+1) MBR - Master boot record, having info about where the Kernel and Initial RAM disk is stored
+
+	a) Kernel is the core of the OS
+	b) Initial RAM disk acts as a temp root while booting
+	c) Initial RAM disk has additional drivers for the kernel to understand the Hardware 
+	d) size of the MBR is 446
+
+2) Partition table 64 bytes
+
+
+3) Magic Bytes - validation of the MBR. 2 bytes in size  
+
+
+dd if=/dev/zero of=test bs=1024 count=100=== to create file with size bs=1024xcount=100 it will give 100k size
+
+[root@project3 yum.repos.d]# echo "- - -" > /sys/class/scsi_host/host
+host0/ host1/ host2/
+[root@project3 yum.repos.d]# echo "- - -" > /sys/class/scsi_host/host0/scan===== to scan a newly added disk
+[root@project3 yum.repos.d]#
+
+
+#watch -n1 "free -m" to see free -m command out put for every second 
+
+
+
+192.168.3.134 pxe centos  7--linux
+192.168.3.130 centos 
+192.168.3.129 rhel 6----linux
+PXE
+
+rm .ifcfg-eth0.swp=========== to remove already opened file
+ echo "0" >/proc/sys/net/ipv4/ip_forward we made the file 0
+/etc/sysctl.conf === config file to make permanent chnages for route config
+sysctl -p  shows the output
+need to create route-eth0 or route-eth1 in network config file
+in the route-eth0  make entry acording to the IP   
+192.168.4.0/24 via 192.168.4.1 ==== make an entry like this
+
+if the present machine is acting as route and if we disable this then pinging between this router will get stoopped
+echo "0" >/proc/sys/net/ipv4/ip_forward===== disabling
+
+
+sleep 2000 &  &=== will run in back groud process
+[root@machine141 ~]# w
+ 23:37:11 up 47 min,  5 users,  load average: 0.00, 0.00, 0.00
+USER     TTY      FROM              LOGIN@   IDLE   JCPU   PCPU WHAT
+root     tty1     -                22:50    7:54   0.23s  0.23s -bash
+root     pts/0    192.168.4.228    23:16   20:29   0.03s  0.03s -bash
+root     pts/1    192.168.1.12     23:35    0.00s  0.12s  0.06s w
+root     pts/2    192.168.1.6      23:35   49.00s  0.04s  0.04s -bash
+root     pts/3    192.168.1.15     23:36   19.00s  0.04s  0.04s -bash
+
+
+ write root pts/2====== using this we can write on the screen for particular wall
+
+tty=== logged in server session
+pts==== putty session
+
+#needs-restarting -r;echo $?    ==== after package installation yum  to check server needes reboot or not 
+find /home/user1 -user 707 -exec chown user3:netapp {} \;
+ find /home -perm 777
+find /home -perm 777 -exec chmod 755 {} \;
+find / -type 
+find / -type d -name Tecmint
+find . -type f -perm 0777 -print
+ find /etc -name yum*
+
+hostname setting
+
+/etc/sysconfig/networks
+HOSTNAME=<hostname>
+
+/etc/hosts
+<ip> <hostname>
+
+yum install system-config-kickstart  ===== to install kf.cfg file
+
+Install:
+--------
+
+client first cehck for dhcp and tftp (it is not security)
+
+yum install tftp-server syslinux dhcp xinetd vsftpd   ======trval ftp  telnet ftp all demons are enabled from xinet
+
+##set /etc/xinetd.d/tftp  "disable = no"
+
+###add content to dhcpd.conf:
+ /etc/dhcp/dhcpd.conf
+
+option domain-name "veecube.com";
+option domain-name-servers 192.168.1.116;
+default-lease-time 600;
+max-lease-time 7200;
+authoritative;====dhcp will not enabled
+allow booting;=== pxe will not enable
+allow bootp;==== pxe will not enable
+allow unknown-clients;=== allow new server 
+subnet 192.168.1.0 netmask 255.255.255.0 {
+  range dynamic-bootp 192.168.1.230 192.168.1.250;  ###leases range
+  option broadcast-address 192.168.1.255;=====end limit of IP
+  option routers 192.168.1.111;   ###dhcpd server==== current server
+  next-server 192.168.1.111;   ######dhcpd server====current server 
+  filename "pxelinux.0";
+}
+#########
+
+cp /usr/share/syslinux/* /var/lib/tftpboot/======= while installing th epackages it will get created
+
+mkdir -p /var/ftp/pub/centos/7/x86_64
+
+mount /dev/sr0  /var/ftp/pub/centos/7/x86_64
+
+mkdir -p /var/lib/tftpboot/pxelinux.cfg
+
+mkdir -p /var/lib/tftpboot/networkboot/centos/7/x86_64
+
+##copying kernel:
+-----------------
+
+cp /var/ftp/pub/centos/7/x86_64/isolinux/vmlinuz /var/lib/tftpboot/networkboot/centos/7/x86_64/
+
+##copying initial ram disk:
+---------------------------
+
+cp /var/ftp/pub/centos/7/x86_64/isolinux/initrd.img /var/lib/tftpboot/networkboot/centos/7/x86_64/
+
+touch /var/lib/tftpboot/pxelinux.cfg/default====== oslisted here
+
+###add content to /var/lib/tftpboot/pxelinux.cfg/default==========client pulls info from this path
+
+default menu.c32
+prompt 0
+timeout 30
+MENU TITLE veecube.com PXE Menu
+
+LABEL centos7_x64
+MENU LABEL CentOS 7_X64
+KERNEL /networkboot/centos/7/x86_64/vmlinuz
+APPEND initrd=/networkboot/centos/7/x86_64/initrd.img inst.repo=ftp://192.168.1.111/pub/centos/7/x86_64 ks=ftp://192.168.1.111/centos7.cfg
+
+###touch /var/ftp/centos7.cfg  (ks.cfg) and add the below============= ks.cfg file config
+
+#platform=x86, AMD64, or Intel EM64T
+#version=DEVEL
+# Firewall configuration
+firewall --disabled
+# Install OS instead of upgrade
+install
+# Use FTP installation media
+#url --url="http://192.168.1.111/repo/repo/tree/master/centos/7/x86_64"
+url --url="ftp://192.168.1.111/pub/centos/7/x86_64"
+# Root password
+rootpw --iscrypted $1$AS/g02LC$TlB69RrvLHBxfKhguORdb0
+# System authorization information
+auth useshadow passalgo=sha512
+# Use graphical install
+graphical
+firstboot disable
+# System keyboard
+keyboard us
+# System language
+lang en_US
+# SELinux configuration
+selinux disabled
+# Installation logging level
+logging level=info
+# System timezone
+timezone Europe/Amsterdam
+# System bootloader configuration
+bootloader location=mbr
+clearpart --all --initlabel
+part swap --asprimary --fstype="swap" --size=1024
+part /boot --fstype xfs --size=300
+part pv.01 --size=1 --grow
+volgroup root_vg01 pv.01
+logvol / --fstype xfs --name=lv_01 --vgname=root_vg01 --size=1 --grow
+%packages
+@^minimal
+@core
+%end
+%addon com_redhat_kdump --disable --reserve-mb='auto'
+%end
+
+###############################
+###start the services xinetd,vsftpd and dhcpd
+
+optional:
+---------
+###############################
+###if packages needs to be specified explicitely:
+
+%packages
+
+@additional-devel
+
+@base
+
+@client-mgmt-tools
+
+@console-internet
+
+@core
+
+@debugging
+
+@directory-client
+
+@ftp-server
+
+@hardware-monitoring
+
+@java-platform
+
+@large-systems
+
+@nfs-file-server
+
+@network-file-system-client
+
+@performance
+
+@perl-runtime
+
+@server-platform
+
+@server-policy
+
+@web-server
+
+@x11
+
+libXinerama-devel
+
+xorg-x11-proto-devel
+
+startup-notification-devel
+
+libgnomeui-devel
+
+libbonobo-devel
+
+libXau-devel
+
+libgcrypt-devel
+
+popt-devel
+
+libXrandr-devel
+
+libxslt-devel
+
+libglade2-devel
+
+gnutls-devel
+
+mtools
+
+pax
+
+python-dmidecode
+
+oddjob
+
+sgpio
+
+device-mapper-persistent-data
+
+samba-winbind
+
+certmonger
+
+pam_krb5
+
+krb5-workstation
+
+perl-DBD-SQLite
+
+certmonger
+
+perl-CGI
+
+#DONE
+
+%end
+
+=============================================
+
+
+class1
+
+
+Linux:
+======
+
+* It is an operating system
+
+* Multi user Environment - remote
+
+* Flavour of Unix
+
+* REDHAT ENTERPRISE LINUX - RHEL
+
+System:
+=======
+
+Input ----> Processing ------> Output
+                       ------> Error
+
+STDIN 0
+STDOUT 1
+STDERR 2
+
+Access:
+=======
+
+* Authentication
+
+        a) Username & Password  -- text CLI command Line Interface
+        b) Finger Print - Bio_Metric -- GUI Graphical User Interface
+        c) Face recognization -- GUI Graphical User Interface
+        d) Key Based auth -- CLI & GUI
+
+ROOT:
+=====
+
+The Top most object in Linux file system hierarchy is the root  /
+
+The directories can be compared to Branches in a tree
+
+The Files can be compared to the Leaves
+
+For example:
+
+/etc/sysconfig/network
+
+commands:
+---------
+
+pwd - present working directory
+
+whoami - which user i have logged in as ?
+
+##user=root , highly previleged user -- super user
+
+useradd <user_name>  ### user creation
+passwd <user_name>   ### change/apply password to an user
+su <user_name>   ### switch user
+exit     ### back to the previous shell
+hostname   ### shows the present machine's name
+cd ~    ### go to home dir
+su - <user_name>  ### switch user plus change pwd to the user's home
+
+
+#### Non-Previleged Users ---- /home/<user_name>
+
+#### for root user ---- the home directory is /root
+
+a) / -- top most object of a file system called ROOT
+
+b) root  -- user, who is highly previleged
+
+c) /root -- the home directory of the user: root
+
+
+what is a Shell ?
+
+Shell is an interface between the system and the user
+
+
+
+class 2
+
+Directory Use:
+==============
+/dev /proc /sys most important
+
+/  The root directory. This is where the file system tree starts.
+
+/bin  In here, you find executable programs that are needed to repair a system in a minimal troubleshooting mode. This directory is essential during boot.
+
+/boot   Contains all files and directories that are needed to boot the Linux kernel.  kernel, initrd,grub.conf need to start 
+
+/dev Device files that are used for accessing physical devices. This directory is essential during boot.
+
+for Eg: /dev/hda   IDE HDD
+        /dev/sda   SATA/SCSI/SAS
+        /dev/mda   RAID
+
+
+/etc Contains configuration files that are used by programs and services that are used on your server. This directory is essential during boot.
+
+
+/home Used for local user home directories.
+
+
+/lib, /lib64 Shared libraries that are used by programs in /boot, /bin and /sbin====32 bit library depend on os if it is 32 then lib will be 32 if not 64
+
+
+/media, /mnt Directories that are used for mounting devices in the file system tree
+
+
+/opt This directory is used for optional packages that may be installed on your server.
+
+
+/srv Directory that may be used for data that is used by services like NFS, FTP and HTTP .
+
+
+/sys    Used as an interface to different hardware devices that is managed by the Linux kernel and associated processes.
+
+
+/proc   This directory is used by the proc file system. This is a file system structure that gives access to kernel information.
+
+
+/root The home directory of the root user.
+
+
+/run Contains process and user specific information that has been created since the last boot.
+
+
+/sbin is Like /bin, but for system administration commands that are not necessarily needed by regular users.
+
+
+/tmp Contains temporary files that may be deleted without any warning during boot.
+
+
+/usr            Directory that contains subdirectories with program files, libraries for these program files and documentation about them. Typically, many  subdirectories exist in this directory that mimic the contents of the / directory. The contents of /usr are not required during boot.
+
+
+/var Directory that contains files which may change in size dynamically,        such as log files, mail boxes, and spool files.
+
+
+Help:
+=====
+
+which <command>   ---> location
+
+whatis <command>  ---> Description
+
+<command> --help
+
+man <command>
+
+
+Wildcards:
+==========
+
+* - to replace many characters or pattern
+
+? - to replace with one character
+
+
+to create an empty file:
+========================
+
+touch <file_name>
+
+
+list:
+=====
+
+ls
+
+ls -l  (long_list) has several field details:
+
+a) very first letter shows the type of the file
+
+        1) -  Regular file
+        2) d  directory file
+        3) b  block file  --- /dev/sda /dev/sdb /dev/sr0 /dev/cdrom
+        4) l  symbollic link    (in windows short cut)
+        5) c  character file   -- all the interfaces /dev/tty
+        6) s  socket file for ex xinet which start tftp telnet
+        7) p  pipe file
+
+b) next 9 chars shows the permission
+
+c) number used links=== number of process hold by or used by others #lsof | grep <filename> it wil show with process holding the file
+
+d) User owner
+
+e) group owner
+
+f) Time and Date stamp of last modification
+
+g) file_name
+
+
+-----
+
+ls -a     (lists all with hidden files too)
+
+the files start with . (dot) are hidden files.
+
+-----
+
+ls -R     (Recurssive)
+
+-----
+
+ls -ltr   (shows the latest at the bottom)
+
+-----
+
+ls -lt    (shows the latest file at the top)
+
+-----
+
+ls *gz    shows the files ending with gz
+
+-----
+
+ls c*     shows the files starting with c
+
+ls c?t    shows files with 3 chars , those start with c and end with t
+
+Please try :  ls c[ao]t
+
+grep "Jul\s\+9\s\+20:3[2,3]" /var/log/messages==== to see on the particular time    \s multiple space
+
+HELP:
+=====
+
+1) <command> --help
+
+2) man <command>     (Manual page) comes from /usr/bin/man
+
+3) whatis <command>
+
+
+
+
+class 3
+
+
+
+Make Directory:
+---------------
+syntax
+        mkdir <Dir_name>
+        mkdir -p <Dir_path_with_name>
+
+change Dir:
+-----------
+syntax:
+        cd <dir_name>
+        cd <dir_path_name>
+        cd ..      #one step back
+        cd (or) cd ~  #change to home_dir
+        ls ../  shows previous diretcory contecnt
+        ls ../../ shows previous previous directory content
+  cat > test1==create new file type content and press ctrl + d
+  cat >>test1-===== add new line at the end of the file
+
+Absoulte Path:
+--------------
+for example:
+I) How to read --- /etc/sysconfig/network-scripts/ifcfg-eth0 ?
+
+        a1) cd /etc/sysconfig/network-scripts/   #use 'pwd' to confirm
+        a2) cat ifcfg-eth0
+
+        b1) cat /etc/sysconfig/network-scripts/ifcfg-eth0
+
+II) How to copy /etc/sysconfig/network-scripts/ifcfg-eth0 to /tmp ?
+
+        a1) cd /tmp
+        a2) cp /etc/sysconfig/network-scripts/ifcfg-eth0 .
+
+        b1) cd /etc/sysconfig/network-scripts/
+        b2) cp ifcfg-eth0 /tmp
+        b3) cp ifcfg-eth0 /tmp/ifcfg-eth1  (copying with another name)
+
+        c) i don't care where i'm
+        c1) cp /etc/sysconfig/network-scripts/ifcfg-eth0 /tmp
+cp -b test1 test3====it will copy the file and take one backup
+
+COPY:
+-----
+
+a) copy file
+
+syntax:
+
+within a directory:     cp <source_file> <destination_file>
+
+out of the directory:   cp <source_file_path> <destination_file_path>
+
+
+b) copy directory
+
+syntax:
+
+within a directory:     cp -r <source_dir> <destination_dir>
+
+out of the directory:   cp -r <source_dir_path> <destination_dir_path>
+
+copying with wildcard:
+
+
+cp /etc/sysconfig/network-scripts/ifcfg-eth0 /tmp
+
+cp /etc/sysconfig/network-scripts/ifcfg-eth0 /tmp/ifcfg-eth2
+
+cp -r /etc/sysconfig/network-scripts/* /tmp
+
+cp -r /etc/sysconfig/network-scripts /tmp
+ cp -ra ==== copy with invisible file .files
+
+
+MOVE or RENAME:
+---------------
+
+syntax:
+
+        mv <source> <destination>
+        mv <source_path> <destination_path>
+
+        Important: create a file or dir and then move them
+
+Concatenation:
+--------------
+
+cat <file_name>
+
+cat <file_path_with_name>
+
+cat > <file_name>
+text1
+text2
+ctrl-d
+
+#now file has only two text lines text1 and text2
+
+cat >> <file_name>
+text3
+text4
+text5
+ctrl-d
+
+#now file has five  text lines text1,2,3,4 and text5
+
+cat > <file_name>
+text6
+text7
+text8
+ctrl-d
+
+#now file has five  text lines text6,7 and text8
+
+How to catch the STDERR ?:
+------------------------
+
+IO Re-Direction:
+----------------
+
+>
+
+>>
+
+any commands output can be redirected to a file (perhaps only STDOUT)
+
+in case if you want to redirect the STDERR
+
+command or script 2> <file_name>
+
+##create a file and put all the known commonds to it.
+
+##sh <file_name>  to execute
+
+sh <file_name> 2>/dev/null  ###only STDOUT in screen
+sh <file_name> 1>/dev/null  ###only STDERR in screen
+
+sh <file_name> 2>/dev/null >> <file> send only error to the file
+sh <file_name> 1>/dev/null >> <file> send only output
+
+sh <file_name> >/dev/null 2>&1 send both output and error
+
+Remove:
+-------
+
+rm <file_name>   ###asks confirmation
+
+rm -r <dir_name> ###recurssive is must to remove a directory
+
+rm -f <file>   ### force remove ... without confirmation
+
+rm -rf <dir_name>  ###remove dir and its tree without confirmation
+
+#####danger rm -rf / ###########
+
+
+class4
+
+
+Deleting Files/Dirs :
+=====================
+
+
+rm <file>      #would ask a confirmation
+
+rm -r <dir>    #would ask a confirmation
+
+rm -f <file>   # f - force
+
+rm -rf <dir>   #dangerous command, use this as a non-root user
+
+
+Links:
+======
+
+soft link:
+----------
+
+
+ln -s <source> <destination>
+
+* Both source and destiantion has different inode numbers #( ls -li).
+
+* As destination is just a pointer to source, if the source is deleted, the destination becomes waste.
+
+*can be done for both files and directories.
+
+ln -s /etc/resolv.conf test.conf=======soft link
+[root@localhost class]# readlink -f test.conf=======shows full path of the link file
+/etc/resolv.conf
+
+
+hard link:
+----------
+
+ln <source> <destination>
+
+* Both source and destiantion has same inode numbers #( ls -li).
+
+* Even if the source is deleted, the destination can function alone.
+
+* cannot be done for directories and can be done for files only
+
+
+Compression
+:
+============
+
+gzip <file>  ---> file.gz (compressed_form)
+
+gunzip <file.gz> ---> file (normal_form)
+
+gzip -r <dir>  ---> dir/*.gz (compressed_form) compresses all invidual files inside the directory
+
+cat <file1> <file2> <file3> | gzip > all.gz
+
+gzip -c <source_file> > <destination.gz>
+
+gunzip -c <source.gz> > <destination_file>
+
+tar:
+===
+
+*Finest utility for compression and archive
+
+without compression:
+====================
+
+tar -cvf <destination.tar> <dir/file>
+
+command  options destination source
+
+c for create
+v verbose
+f file
+
+
+# tar -cvf /home/raj/conf.tar resolv.conf
+
+/home/raj path
+conf.tar is the name we given
+we taken resolv.conf as tar file
+
+tar -xvf conf.tar -C /home/IBM--- xtracting
+-C to other director
+under /home/idm it will get extract as resolv.conf
+
+verification:
+--------------
+
+tar -tvf <file.tar>
+
+extraction:
+-----------
+
+tar -xvf <file.tar.gz>      ###to do in current dir
+
+tar -xvf <file.tar.gz> -C <destination_dir>   ###to do in another dir/path
+
+
+with compression:
+=================
+
+tar -cvzf <file.tar.gz> <dir>
+
+verification:
+--------------
+
+tar -tvf <file.tar>
+
+
+extraction:
+-----------
+
+tar -xvf <file.tar.gz>      ###to do in current dir
+
+tar -xvf <file.tar.gz> -C <destination_dir>   ###to do in another dir/path
+
+
+
+class5
+
+
+Delimeter: separator
+
+
+
+a) super user b) Normal user  and c) Technical/system user
+
+
+/etc/passwd :   * Info about Users
+-------------
+#gentent passwd======list all with user
+getent shadow
+getent gshadow
+#gentent group=====list all group including ldap
+
+Delimeter is   ':'
+
+1       username
+
+2       Password , normally x and password details are in /etc/shadow file
+
+3       uidNumber
+
+4       gidNumber  and group details are in /etc/group file
+
+5       Description or Gecos
+
+6       Home Directory
+
+7       shell    /bin/bash  /bin/ksh  /bin/tcsh  /bin/zsh /sbin/nologin
+
+
+
+
+/etc/shadow :
+-------------
+
+1    Username. Case-sensitive, usually all lowercase. A direct match to
+
+the username in the /etc/passwd file.
+
+2    Password. A blank entry (eg. ::) or :!!: indicates a password is not set
+
+(usually a bad idea), and a ``*'' entry (eg. :*:) indicates the account
+
+has been disabled, else encrypted passwd would be there.
+
+3    The number of days (since January 1, 1970) since the password was
+
+last changed.
+
+4    The number of days before password may be changed (0 indicates it
+
+may be changed at any time)
+
+5    The number of days after which password must be changed (99999
+
+indicates user can keep his or her password unchanged for many, many
+
+years)
+
+6    The number of days to warn user of an expiring password (7 for a
+
+full week)
+
+7    The number of days after password expires that account is disabled
+
+8    The number of days since January 1, 1970 that an account has been
+
+disabled
+
+9    A reserved field for possible future use
+
+
+/etc/group :
+------------
+
+1       group Name
+
+2       gPassword
+
+3       gidNumber
+
+
+===========================================================================
+Common Text related tools:
+---------------------------
+
+
+syntax:
+=======
+
+1) <command> <file_name>
+
+2) result | <command>
+
+
+a)  tail <file>
+
+shows last 10 lines
+    tail -15 <file_name>
+
+    cat <file_name> | tail -5
+
+
+b)  head <file_name>
+
+shows top 10 line
+
+    head -5 <file_name>
+
+    cat <file_name> | head -5
+
+
+c) less <file_name>
+
+   cat <file_name> | less
+
+both top and bottom scroll available
+
+
+d) more <file_name>
+
+   cat <file_name> | more
+
+only bottom scroll is available
+
+e) wc -l <file_name>    ##line count
+   wc -w <file_name>    ##word count
+   wc -c <file_name>   ##char count
+
+   cat <file_name> | wc -l
+   cat <file_name> | wc -w
+   cat <file_name> | wc -c
+
+f) sort <file_name>
+   cat <file_name> | sort
+   cat <file_name> |sort -u   ... shows without duplicates
+   cat <file_name> |sort |uniq -d  ...shows only the duplicates
+
+cut:
+====
+
+example1:
+---------
+
+
+
+cut -d ":" -f1 /etc/passwd    ##shows the feild 1
+
+-d to specify delimeter
+
+: as the delimeter
+
+-f to specify the field
+
+1 is the field number
+
+
+example2:
+---------
+
+echo "some output text" |cut -d " " -f2,3
+
+here space is the delimeter
+
+2,3 are two feilds in order, here we are cutting two fields together
+
+example3:
+---------
+
+echo "some output text" |cut -c1,2
+
+-c to specify the character number
+
+1,2 are the two character numbers in order here we are cutting two characters together
+
+grep is a filter utility:
+==========================
+
+cat /etc/passwd | grep root
+
+here root is a pattern
+
+voiding a pattern:
+------------------
+
+cat /etc/passwd |grep -v root
+
+-v to void the pattern and to print rest of the output
+
+same cases can be run like:
+---------------------------
+
+grep root /etc/passwd
+
+grep -v root /etc/passwd
+
+
+to remove case-sensitivity:
+---------------------------
+
+grep -i
+
+cat /etc/passwd|grep -i murali
+
+
+to check recursively:
+---------------------
+
+grep -r murali /etc
+
+
+to check more than one pattern:
+-------------------------------
+
+grep -e home -e murali
+
+grep -e murali -e home -e possible test1
+
+ egrep -i "raj|san|class1" /etc/passwd  fetch only name come with raj san class
+
+
+quite mode:
+-----------
+
+grep -q <pattern> <file>;echo $?
+
+
+## 0 means success 
+## 1 means failure
+
+
+
+sticky bit
+
+chmod 1777 /tmp   
+drwxrwxrwt. 11 root root 4096 Jul 30 20:08 /tmp==== t indicated sticky bit
+all users can create files under this directory but one user cant delet or modify other users file
+
+to remove
+chmod 0777 /tmp
+
+setuid
+
+
+as a normal user if you execute fdsik it will not show output   /etc/passwd
+user have permission same as owner for executabel files 
+
+ chmod u+s /usr/sbin/fdisk
+
+[root@localhost sam]# ls -l /usr/sbin/fdisk
+-rwsr-xr-x. 1 root root 182424 Mar 28  2014 /usr/sbin/fdisk===== s set to setuid
+after changing this if normal user execute it will be exexcuted  
+
+
+
+user default
+
+less /etc/default/useradd=== can change the permission of the user while creating 
+
+# useradd defaults file
+GROUP=100
+HOME=/home
+INACTIVE=-1
+EXPIRE=
+SHELL=/bin/bash
+SKEL=/etc/skel
+CREATE_MAIL_SPOOL=yes
+
+(END)
+
+
+skel=== while creating user we get some default directory .bash_logout   .bash_profile  .bashrc all will be pushed from  /etc/skel
+
+umask === to set default permission for root and user while creating directory and files
+default file /etc/ login.defs
+
+
+777-022=755 diretory    666-022=644 file    for root user
+777-002=775             666-002=664         for normal user
+
+can be modified in .bash_profile  .bashrc in user profile will update 
+
+path  we have two path global path and the internal path
+
+global path can be executable anywere but internal path will execute only in that particular director
+
+if we have a script under it will be executed only under  /tmp/ if we set path it will be executable from all the place
+
+echo $PATH
+/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/root/bin
+PATH=/tmp:$PATH
+
+export   ==== we can create a variable and export it to globally 
+
+SAM='myname' ; export sam=== it will export globally
+echo $sam
+myname
+
+env is the variable set for sytem use variable
+
+
+
+
+facl===file permission access control list
+
+normally one user cant edit or create file or directory in other user home directory
+
+setfacl -m u:raj78:rwx /home/sam
+
+ getfacl /home/sam
+
+getfacl: Removing leading '/' from absolute path names
+# file: home/sam
+# owner: sam
+# group: IBM
+user::rwx
+user:raj78:rwx
+group::rwx
+mask::rwx
+other::r-x
+
+so now the user raj78 have permission to modify sam user home files and directoy
+
+
+redhat-release-server-7.0-1.el7.x86_64===-7 major version  e17 entrprise linux7  x86_64 bit  
+rpm -qa=== list all
+  784  rpm -qa --last-----list last update package
+  785  rpm -qc redhat-release-server-7.0-1.el7.x86_64===== list config files
+  786  rpm -ql redhat-release-server-7.0-1.el7.x86_64======= list number of files generated by the package
+
+ rpm -qa --last | more====to check updated packages
+lsscsi-0.23-2.el6.x86_64                      Mon 03 Sep 2018 07:38:27 AM PDT
+iscsi-initiator-utils-6.2.0.873-2.el6.x86_64  Mon 03 Sep 2018 07:34:19 AM PDT
+nss_compat_ossl-0.9.6-1.el6.x86_64            Sat 01 Sep 2018 08:18:47 AM PDT
+
+
+to configure yum need to install the below pacakages9creating local repo)
+rpm -ivh createrepo-0.9.9-26.el7.noarch.rpm
+rpm -ivh deltarpm-3.6-3.el7.x86_64.rpm
+rpm -ivh python-deltarpm-3.6-3.el7.x86_64.rpm
+rpm -ivh createrepo-0.9.9-26.el7.noarch.rpm
+rpm -ivh vsftpd-3.0.2-21.el7.x86_64.rpm  by vsftpd or httpd /var/ftp and ftp user gets created if httpd it will create directory under /var/www/.. and apache user will get created 
+
+cd /var/ftp/pub/  while installing vsftpd ftp directory gets installed
+cp -r /mnt/Packages .
+
+ createrepo 
+service vsftpd start
+cd /etc/yum.repos.d/
+
+httpd
+ftp
+file ==== way of configuring yum 
+
+[root@slave yum.repos.d]# cat packages.repo 
+[package]
+name=Repository
+baseurl=file:///media/CentOS_6.6_Final/
+enabled=1
+gpgcheck=0
+
+[yumonline]
+name=Repositoryonline
+baseurl=http://dl.fedoraproject.org/pub/epel/6/x86_64
+enabled=1
+gpgcheck=0
+
+[local]
+name=local
+baseurl=ftp://192.168.1.7/pub/Packages
+gpgcheck=0
+enabled=1
+
+
+
+[root@localhost yum.repos.d]# cat local.repo
+[local]
+name=local
+baseurl=ftp://192.168.1.18/pub/Packages
+gpgcheck=0
+enabled=1
+[root@localhost yum.repos.d]#
+
+under cd /var/ftp/pub/Package
+       createrepo .=====will create a metadata repo 
+
+disable firewall and selinux
+
+ yum clean all
+check vsftpd status
+
+
+yum provides */nslookup=== shows from whihc packages the commands comes from we can install those
+
+Another app is currently holding the yum lock; waiting for it to exit   if the error comes
+ps -ef | grep yum
+root      3823  3104  0 12:53 tty2     00:00:00 /usr/bin/python /usr/bin/yum install tuned
+root      3859  3835  0 12:55 pts/0    00:00:00 grep yum
+
+kill -9 3823
+ rm -f /var/run/yum.pid
+[root@host ~]# yum clean all
+
+
+if yum is configured with ftp server please cehck vsftpd status and restart the service 
+yum commands:
+============
+
+yum install <package_name> -y   -y it wont ask yes conformation 
+
+yum reinstall <package_name> -y
+
+yum remove <package_name> -y
+
+yum repolist    => what are all the repositories available
+
+yum list ldap*    => way of search
+
+yum search ldap   => way of search
+
+yum provides */<command>
+
+yum groupinstall <group_package_name>
+
+yum clean all
+
+
+
+
+
+NETWORK CONFIG::::
+
+cat /proc/net/dev  to check how many networkcard in the machine
+
+/etc/sysconfig/network-scripts/ifcfg config file for network
+
+if we have multiple interface then dont user ""network restart command" instead user ifdown eth1 and ifup eth1 to down and up a particular interface
+
+
+route -n   to check gate way
+ipaddr show   will show how many network card and the network car is up or down
+ethtool eth0  to check status of the network card
+ Duplex: Full--- if duplexi is full it iw owkring fine if it is half or none then the connection is not perfect
+
+ALIAS creating
+
+[root@client02 ~]#  cat /etc/sysconfig/network-scripts/ifcfg-eth0=== card
+DEVICE="eth0"
+BOOTPROTO="dhcp"
+HWADDR="00:0C:29:7D:19:91"
+IPV6INIT="yes"
+NM_CONTROLLED="yes"
+ONBOOT="yes"
+TYPE="Ethernet"
+UUID="8a7435b9-5765-4b84-913e-34d52359a84e"
+
+[root@client02 ~]#  cat /etc/sysconfig/network-scripts/ifcfg-eth0:1  remove HWADDR UUID remove this both
+DEVICE="eth0:1"
+BOOTPROTO="static"
+IPADDR=192.168.3.139
+NETMASK=255.255.255.0
+GATEWAY=192.168.3.2
+IPV6INIT="no"
+NM_CONTROLLED="no"
+ONBOOT="yes"
+
+if eth0 get distrubed eth0:1(alias will also get distrubed)
+TYPE="Ethernet"
+
+NETWORK BONDING 
+IF WE CONFIGURE IN VMWARE ADD NETWORK ADAPTOR THEN CONFIGURE IF IT IS PHYSICAL MACHINE NETWORK TEAM WILL ADD 
+
+[root@localhost ~]# cat /etc/modprobe.d/bonding.conf
+alias bond0 bonding
+options bond0 mode=1 miimon=100
+[root@localhost ~]#
+
+
+root@192.168.1.189's password:
+Last login: Thu Aug  9 01:22:16 2018 from 192.168.3.1
+[root@localhost ~]# cat /etc/sysconfig/network-scripts/ifcfg-eth1
+DEVICE="eth1"
+TYPE=ethernet
+ONBOOT=yes
+NM_CONTROLLED=no
+MASTER=bond0
+SLAVE=yes
+
+[root@localhost ~]# cat /etc/sysconfig/network-scripts/ifcfg-eth2
+DEVICE="eth2"
+TYPE=ethernet
+ONBOOT=yes
+NM_CONTROLLED=no
+MASTER=bond0
+SLAVE=yes
+
+
+[root@localhost ~]# cat /etc/sysconfig/network-scripts/ifcfg-bond0
+DEVICE="bond0"
+BOOTPROTO="static"
+NETMASK=255.255.255.0
+GATEWAY=192.168.1.1
+IPADDR=192.168.1.189
+NM_CONTROLLED="no"
+ONBOOT="yes"
+TYPE="bond"
+
+/etc/udev/rules.d/70-persistent-net.rules---- to chnage network card name
+udevadm control --reload ------reload the udev rules
+start_udev----restarting udev
+
+
+SUDO
+
+#vi sudoers
+## Allow root to run any commands anywhere
+root    ALL=(ALL)       ALL
+user1   ALL=(ALL)       ALL=============IT WILL ASK PASSWORD to the user 1
+USER2   ALL=(ALL)       NOPASSWD: ALL=======nopasswd: all it wont ask password
+user2   ALL=(ALL)       NOPASSWD: ALL !/bin/ls
+user2   localhost.localdomain=(ALL)       NOPASSWD: ALL======= only on this particular machine user can able  to execute any sudo command
+user2   localhost.localdomainmm=(ALL)=== if any mistake done on the domain mname then user cant able to execute any sudo commands 
+if we start the name with % then it will consider as group name
+
+EX %IBM ALL=(ALL)       ALL
+
+
+
+
+LDAP CLIENT
+
+yum install openldap-clients nss-pam-ldapd authconfig
+authconfig-tui========= to change the setting of the ldap, if we made the changes entry in nsswitch will get disabled need to add the entry again
+ vi /etc/nsswitch.conf   lines already will be there to read local user info, to read ldap user info add ldap near to the present line
+
+passwd:     files ldap
+shadow:     files ldap
+group:      files ldap
+
+netgroup:   files ldap
+
+yum install nc=== package use to see remote host port details
+nc -zv -w3 192.168.1.221 389
+
+[root@project3 ~]#  nc -zv -w3 192.168.1.221 389
+Connection to 192.168.1.221 389 port [tcp/ldap] succeeded!
+
+
+getent passwd---- to see ldap user info 
+
+getent passwd samraj
+samraj:*:1010:6000:rajsam:/home/samraj:/bin/bash
+
+authconfig --enablemkhomedir --update  ===enable entry in /etc/pam.d/system-auth  and will add the below line in this file
+
+ldapsearch -x -h 192.168.1.221 -b "dc=veecube00,dc=com" "cn=veecube6*"
+
+
+
+ULIMITS
+
+user limits
+config file /etc/security/limits.conf
+
+#*               soft    core            0
+#*               hard    rss             10000
+#@student        hard    nproc           20
+#@faculty        soft    nproc           20
+#@faculty        hard    nproc           50
+#ftp             hard    nproc           0
+#@student        -       maxlogins       4
+ user2           hard    maxlogins       1===== entry made by us now user2 can open only one session if user try to open other session it iwll close
+ user2           hard    nproc           5    after 5 process it will message Resource temporarily unavailable
+
+domain              type                 item                value
+
+user               softor hard           19 items             depends on item valueee
+or
+group
+or * indicates all
+
+Tuned is a profile-based system tuning tool that uses the udev device manager to monitor connected devices,
+ and enables both static and dynamic tuning of system settings. 
+ Dynamic tuning is an experimental feature and is turned off by default in Red Hat Enterprise Linux 7.
+
+install tuned package
+service tuned status
+
+
+[root@client02 Packages]# tuned-adm list
+Available profiles:
+- laptop-ac-powersave
+- spindown-disk
+- server-powersave
+- desktop-powersave
+- enterprise-storage
+- laptop-battery-powersave
+- latency-performance
+- virtual-guest
+- virtual-host
+- throughput-performance
+- default
+Current active profile: default
+[root@client02 Packages]#
+
+ tuned-adm profile throughput-performance
+
+
+real    0m8.087s
+user    0m2.017s
+sys     0m5.907s
+[root@client02 Packages]# tuned-adm profile throughput-performance  before and after runinng perfor
+Reverting to saved sysctl settings:                        [  OK  ]
+Calling '/etc/ktune.d/tunedadm.sh stop':                   [  OK  ]
+Reverting to cfq elevator: sda sdb sdc                     [  OK  ]
+Stopping tuned:                                            [  OK  ]
+Switching to profile 'throughput-performance'
+Applying ktune sysctl settings:
+/etc/ktune.d/tunedadm.conf:                                [  OK  ]
+Calling '/etc/ktune.d/tunedadm.sh start':                  [  OK  ]
+Applying sysctl settings from /etc/sysctl.conf
+Applying deadline elevator: sda sdb sdc                    [  OK  ]
+Starting tuned:                                            [  OK  ]
+[root@client02 Packages]# time seq 10000000 > file
+
+real    0m6.322s
+user    0m5.633s
+sys     0m0.672s
+[root@client02 Packages]#
+
+
+
+===============================================
+
+trouble shooting
+
+booting issue
+
+
+ctrl + alt + insert press escape--- will come to booting steps
+select cd rom
+troubleshooting--- select trouble shooting
+go to rescue mode---select rescue mode
+press 1 for continue
+#chroot /mnt/sysimage to change shell to bash and it will go to our hardisk os mounting place
+vi /grub/grub.conf
+
+two entries need to be present for init and kernel start with /
+
+rpm -ivh --replacepkgs --replacefiles (((if initramd or kernal is missing then install those)))– to install package without dependencies
+
+
+grub other issue
+
+log in the issue server with same trouble shooting mode
+fdisk -l | grep -i "sda"
+/dev/sda1 *  ===active directory bootable devices will be stored under this
+grub located in the first sector of the cylinder it is not related with partation table
+grub-install /dev/sda
+
+yum issue
+
+yum repolist will givethe below error
+
+Another app is currently holding the yum lock; waiting for it to exit...
+  The other application is: dd
+    Memory : 664 k RSS (103 MB VSZ)
+    Started: Thu Aug 16 04:01:41 2018 - 02:38 ago
+
+cd /var/run
+under this we have yum.pid open the file and kill the process and remove the file 
+
+
+error occurs due to current running yum is stopped accidently
+[root@project3 /]# yum repolist
+Bus error (core dumped)
+[root@project3 /]# rpm -qa
+Bus error (core dumped)
+[root@project3 /]#
+
+if yum and rpm not working and gives above error  check under the /var/lib/rpm  due to db error this occurs remove the error db files
+if yum install not working search ping google.com or make an entry in /etc/resolve.cong with nameserver 8.8.8.8
+
+[root@project3 /]# cd /var/lib/rpm
+[root@project3 rpm]# ls
+Basenames     __db.001  __db.003  Dirnames     Group       Name          Packages     Provideversion  Requirename     Sha1header  Triggername
+Conflictname  __db.002  __db.004  Filedigests  Installtid  Obsoletename  Providename  Pubkeys         Requireversion  Sigmd5
+[root@project3 rpm]# rm -f __*
+
+[root@project3 rpm]# rpm --rebuilddb=======rebuild the db 
+[root@project3 rpm]# yum clean all
+
+
+===============================================================================
+
+
+
+NFS port 2049
+
+CentOS 64-bit-0.vmdk
+/etc/exports
+
+service rpcbind start
+
+NOTE: rpc share information about the system
+
+service nfs start
+
+exportfs -avr
+[root@project3 ibm]# exportfs -v
+/test           192.168.1.0/24(rw,wdelay,no_root_squash,no_subtree_check,sec=sys,rw,no_root_squash,no_all_squash)
+
+
+[root@project3 ibm]# cat /etc/exports
+/test 192.168.1.0/24(rw,sync,no_root_squash)
+/ibm 192.168.1.0/24(ro,sync,no_root_squash)
+[root@project3 ibm]#
+
+
+strace df -h======== to cehck nfs hung issue show mount point
+ umount -l /mnt===== to unmount the resource which is busy
+
+192.168.1.16:/home      /nfsmount               nfs     defaults,vers=3        0 0
+to mount vers3 if nfs have different version it worn work
+
+hard mount soft mount   if it is hard mount in the fstab entry while rebooting client server will fetch for nfs mount, if the nfs server is down untill the server gets up
+client server will not come, if it is soft mount client will not get affected if the nfs server is down
+
+to cehck opened port in other server
+
+need to installl telnet in the present server 
+and 
+telnet 192.168.1.19 2049
+
+
+ yum install nc
+
+[root@localhost ~]# nc -zv -w3 192.168.1.19 2049
+Connection to 192.168.1.19 2049 port [tcp/nfs] succeeded!
+
+
+yum install autofs
+showmount -e <NFS_server_ip>==== on client
+mkdir /<directory_name>
+on /etc/auto.master file make an entry /<mount_point> 		<new_reference_file>    EX /autofs  /etc/auto.sam  ((in auto.sam  name given by us auto is mandatory))
+vi /etc/auto.sam  make an entry ####sam -rw		192.168.1.173:/share1  (((sam secret name given by us and ip of the nfs shared client)))
+
+if we give full path from other directory it will give th eoutput
+
+service autofs start
+chkconfig auto on
+
+7) to check :
+   ==========
+
+cd /<mount_point>
+##do a listing ....no files/dirs present
+cd <secret_name> ..... goes to the auto mount
+df -hP
+
+sam -fstype=cifs,rw,credentials=/etc/cred ://192.168.1.16/home
+
+
+
+
+
+SAMBAA---
+
+it can be used to connect with windows to linux and linux to linux 
+
+137 138 139   and recent 445  port number 
+
+yum install samba-winbind cifs-utils samba-common
+
+on windows maching check the permissionof the sahring folder
+
+vi /etc/cred  create and make an extry of your windows machine user name and password
+
+mount -t cifs -o credentials=/etc/cred //192.168.1.19/share /windows_share/  temp mounting
+
+//192.168.1.12/share    /windows_share/         cifs    credentials=/etc/cred   0 0  on fstab entry 
+
+linux to windows
+
+Main configuration file:
+=========================
+
+/etc/samba/smb.conf
+
+
+create a directory in linux EX  share_windows then chmod to 777 to the directory 
+
+ yum install samba samba-common samba-winbind cifs-utils=======server side install 
+
+ #useradd --home /share_windows sambauser=====creating samba user and password
+ #smbpasswd -a sambauser
+
+/etc/samba/smb.conf  copy  the below two lines in the file and paste on the preset line belwo
+
+interfaces = lo eth0 192.168.1.0/24====== from which range to whihc range network need to be accessed
+        hosts allow = 127. 192.168.1.============ ip range 
+
+and in the below of the file make entry for the sharing diretcory 
+
+ [samraj]
+        comment = Private Stuff
+        path = /share_windows
+        public = no
+        writable = yes
+        browseable = yes
+        valid users = sambauser
+
+with the name of samraj  given by us we are going to share the path with windows
+
+ testparm==== to check our config are correct the out put will show th epath which we shared
+
+service smb start
+
+\\192.168.1.18\samraj ====on windows search for the linux shared path and if you create a new file or dirctory under this it will get created on linux 
+
+
+LINUX TO LINUX 
+
+yum install samba-common cifs-utils samba-winbind samba-client
+
+smbclient -L //192.168.1.19/share_windows -U sambauser
+
+create same  file in client server /etc/cred username and password  entry which is created on the samba server username and password
+
+smbclient -L //192.168.1.18/share_windows -U sambauser
+
+fstab entry 
+
+//<192.168.1.16>/share_windows <mount_point> cifs  credentials=/etc/credentials  0 0
+
+
+mount -a;  df -TPH
+
+SAMBA:			port:	137 139 445
+------
+
+A kind of file and resource sharing protocol
+
+Mainly used between Linux and windows or Linux to Linux
+
+Server side:
+------------
+
+Install:
+========
+
+yum install samba samba-common samba-winbind cifs-utils
+
+Main configuration file:
+=========================
+
+/etc/samba/smb.conf
+
+In the configuration:
+---------------------
+
+GLOBAL:
+-------
+
+through which IP/HOST can access
+
+using which NIC 
+
+which NETWORK range/domain can access
+
+SHARE:
+------
+
+share path
+
+share title
+
+share description
+
+write/read ?
+
+Public access/valid users ?
+
+browseable ?
+
+prepare a share:
+----------------
+
+mkdir /samba_share
+
+chmod 777 /samba_share
+
+prepare user:
+-------------
+
+useradd -c "samba user" winsharer
+
+smbpasswd -a winsharer
+
+configuration:
+--------------
+
+[global]
+
+interfaces = lo eth0 192.168.1.0/24
+hosts allow = 127. 192.168.1.
+
+[myshare]
+comment = Windows share
+path = /samba_share
+public = no
+writable = yes
+valid users = winsharer
+browseable = yes
+
+start the service:
+------------------
+
+service smb start ###RHEL6
+
+systemctl start smb.service  ###RHEL7
+
+verify:
+-------
+
+###for smb.conf --- try --> testparm (command)
+
+go to explorer in windows
+
+run command 
+
+\\192.168.1.175\myshare'
+
+
+
+LDAP 1/18/2018 version 3
+
+/etc/openldap/slapd.conf  in the file if commente is added in the below line remove the comments
+
+include         /etc/openldap/schema/corba.schema
+include         /etc/openldap/schema/core.schema
+include         /etc/openldap/schema/cosine.schema
+include         /etc/openldap/schema/duaconf.schema
+include         /etc/openldap/schema/dyngroup.schema
+include         /etc/openldap/schema/inetorgperson.schema
+include         /etc/openldap/schema/java.schema
+include         /etc/openldap/schema/misc.schema
+include         /etc/openldap/schema/nis.schema
+include         /etc/openldap/schema/openldap.schema
+include         /etc/openldap/schema/ppolicy.schema
+
+allow bind_v2
+
+{SSHA}GdkUoM2O8Z5HA7YZ83Y4e/fbPAzRXFgU
+include         /etc/openldap/schema/collective.schema
+
+
+APACHE====21-8-2018
+only 10000 can use apache webserver at a atime to overcome this issue we use tomcat
+
+*Web Server
+
+name of the service : httpd  Port: 80    https: 443
+
+Installation:
+-------------
+
+yum install httpd
+
+
+Set the /etc/hosts file:
+------------------------
+
+<ip_addr> <hostname.domainname>
+
+
+Main configuration file:
+------------------------
+
+/etc/httpd/conf/httpd.conf
+
+
+setting up the virtual host:
+----------------------------
+
+copy and paste the bottom 7-9 lines like as shown down:
+
+<VirtualHost <ip>:80>
+ServerAdmin 
+DocumentRoot
+
+AFTER modified only this three lines 
+
+#<VirtualHost 192.168.1.19:80>
+#    DocumentRoot /var/www/html
+#    ServerName project3.veecube.com
+#</VirtualHost>
+
+if we created in the name of html then give only IP in google search if we specified some other name then give the name path
+
+create a new file /var/www/html/index.html:
+-------------------------------------------
+
+<type any text>
+
+
+syntax verification:
+--------------------
+
+httpd -t
+
+
+systemctl start httpd    RHEL7
+
+service httpd start	 RHEL6
+
+
+
+<VirtualHost 192.168.1.19:80>
+    DocumentRoot /var/www/html
+    ServerName project3.veecube.com
+    <Directory "apache">=====create directory under this directory copy iso image(for example we can copy wat ever and it canbe exported)
+    Order allow,deny====if we give allow from (192.168.1.0/24) it will allow only from this ip range same for deny
+    Allow from all
+    Options FollowSymLinks
+    </Directory>
+</VirtualHost>
+
+ln -s /mnt /var/www/html/apache/iso==== iso link file we created and stored under the path adn in google search we can view this and can download those files
+
+
+SWAP
+
+Swap creation:
+--------------
+
+1) Either add a new disk and create swap directly on it
+
+2) or create any partition on the disk and create swap on it
+
+3) Create a logical volume and create swap on it
+
+4) Create a big file and create swap on it.
+
+5) can use existing partiton by chnaging the partation table number
+
+to view the Swap size:
+----------------------
+
+swapon -s 
+
+free -m
+
+top
+
+vmstat
+
+grep swap /etc/fstab
+
+
+command  -option  device
+------------------------
+
+mkswap -f /dev/<disk/part>
+
+mkswap -f /dev/disk
+
+mkswap -f /dev/<vg_name>/<lv_name>
+
+mkswap -f <path_to_the_file>
+
+on/off:
+-------
+
+swapon -a 
+
+swapon <device>
+
+swapoff <device>
+
+For example:
+------------
+
+[root@gowri1 ~]# swapon -s
+Filename                                Type            Size    Used    Priority
+/dev/dm-1                               partition       2097148 0       -1
+
+
+
+MYSQL
+
+Installation
+============
+
+yum install mysql
+yum install mysql-server
+yum install mysql-devel
+yum install mysql-bench
+yum install MySQL-python.x86_64 mysql-utilities.noarch mysql-server.x86_64
+
+Users functions
+List all users: SELECT User,Host FROM mysql.user;
+Create new user: CREATE USER 'username'@'localhost' IDENTIFIED BY 'password';
+Grant ALL access to user for * tables: GRANT ALL ON database.* TO 'user'@'localhost';
+
+
+chkconfig and start service
+---------------------------
+
+Verify the version
+-------------------
+
+mysqladmin --version
+
+Set Initials
+------------
+
+mysql_secure_installation
+
+shutting down
+-------------
+
+mysqladmin -u root -p shutdown
+
+Login
+-----
+
+mysql -u root -p
+
+mysql> use mysql;
+Reading table information for completion of table and column names
+You can turn off this feature to get a quicker startup with -A
+
+
+mysql> FLUSH PRIVILEGES;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql>
+
+mysql> create database sam;================creating database
+Query OK, 1 row affected (0.00 sec)
+
+mysql> STATUS;=======================to check current db
+--------------
+mysql  Ver 14.14 Distrib 5.1.66, for redhat-linux-gnu (x86_64) using readline 5.1
+
+Connection id:          12
+Current database:       sam
+
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| mysql              |
+| sam                |
+| test               |
++--------------------+
+4 rows in set (0.00 sec)
+
+use sam;=======to chnage database we have sam database inside database we can create multiple table
+
+SHOW TABLES;=================show tables
+
+mysql> create table DXC(slno int(1),server varchar(7),ip varchar(16),type varchar(5),app varchar(5),owner varchar(5),decom varchar(3));
+Query OK, 0 rows affected (0.02 sec)=========creating table
+
+
+mysql> desc DXC;========to view the table
++--------+-------------+------+-----+---------+-------+
+| Field  | Type        | Null | Key | Default | Extra |
++--------+-------------+------+-----+---------+-------+
+| slno   | int(1)      | YES  |     | NULL    |       |
+| server | varchar(7)  | YES  |     | NULL    |       |
+| ip     | varchar(16) | YES  |     | NULL    |       |
+| type   | varchar(5)  | YES  |     | NULL    |       |
+| app    | varchar(5)  | YES  |     | NULL    |       |
+| owner  | varchar(5)  | YES  |     | NULL    |       |
+| decom  | varchar(3)  | YES  |     | NULL    |       |
++--------+-------------+------+-----+---------+-------+
+7 rows in set (0.00 sec)
+
+
+mysql> insert into DXC(slno,ip)values(1,'192.168.1.19');
+Query OK, 1 row affected (0.00 sec)
+
+mysql> select * from DXC;
++------+--------+--------------+------+------+-------+-------+
+| slno | server | ip           | type | app  | owner | decom |
++------+--------+--------------+------+------+-------+-------+
+|    1 | NULL   | 192.168.1.19 | NULL | NULL | NULL  | NULL  |
+|    2 | NULL   | 192.168.1.29 | NULL | NULL | NULL  | NULL  |
++------+--------+--------------+------+------+-------+-------+
+2 rows in set (0.00 sec)
+
+mysql> select * from DXC where ip='192.168.1.29';
++------+--------+--------------+------+------+-------+-------+
+| slno | server | ip           | type | app  | owner | decom |
++------+--------+--------------+------+------+-------+-------+
+|    2 | NULL   | 192.168.1.29 | NULL | NULL | NULL  | NULL  |
++------+--------+--------------+------+------+-------+-------+
+1 row in set (0.00 sec)
+
+
+mysql> ALTER TABLE DXC ADD datacenter varchar( 10 ) after type;====adding new variable charatcter 
+Query OK, 2 rows affected (0.00 sec)
+Records: 2  Duplicates: 0  Warnings: 0
+
+mysql> desc DXC;
+
++------------+-------------+------+-----+---------+-------+
+| Field      | Type        | Null | Key | Default | Extra |
++------------+-------------+------+-----+---------+-------+
+| slno       | int(1)      | YES  |     | NULL    |       |
+| server     | varchar(7)  | YES  |     | NULL    |       |
+| ip         | varchar(16) | NO   | PRI |         |       |
+| type       | varchar(5)  | YES  |     | NULL    |       |
+| datacenter | varchar(10) | YES  |     | NULL    |       |
+| app        | varchar(5)  | YES  |     | NULL    |       |
+| owner      | varchar(5)  | YES  |     | NULL    |       |
+| decom      | varchar(3)  | YES  |     | NULL    |       |
++------------+-------------+------+-----+---------+-------+
+
+
+[root@localhost ~]# mysql -u root -p -D sam -e "SELECT * from DXC"== to query from out side
+Enter password:
++------+------+--------+--------------+------+--------+------------+------+-------+-------+
+| rack | slno | server | ip           | type | region | datacenter | app  | owner | decom |
++------+------+--------+--------------+------+--------+------------+------+-------+-------+
+| NULL |    1 | NULL   | 192.168.1.19 | NULL | NULL   | NULL       | NULL | NULL  | NULL  |
+| NULL |    2 | NULL   | 192.168.1.29 | NULL | NULL   | NULL       | NULL | NULL  | NULL  |
++------+------+--------+--------------+------+--------+------------+------+-------+-------+
+[root@localhost ~]# mysql -u root -p -D sam -e "SELECT * from DXC where slno='2'"=======to query from out side for particular table
+Enter password:
++------+------+--------+--------------+------+--------+------------+------+-------+-------+
+| rack | slno | server | ip           | type | region | datacenter | app  | owner | decom |
++------+------+--------+--------------+------+--------+------------+------+-------+-------+
+| NULL |    2 | NULL   | 192.168.1.29 | NULL | NULL   | NULL       | NULL | NULL  | NULL  |
++------+------+--------+--------------+------+--------+------------+------+-------+-------+
+[root@localhost ~]# mysql -u root -p -D sam -e "SELECT * from DXC" >/var/www/html/index.html===== to use in httpd 
+
+
+ROOT PASSWORD CHANGING MYSQL
+
+service mysqld stop
+
+mysqld_safe --skip-grant-tables
+
+mysql -u root
+
+use mysql;
+
+update user set password=PASSWORD("redhat1") where User='root';
+
+flush privileges;
+
+exit
+
+##kill all the mysqld processes
+
+service mysqld start
+
+
+ mysqldump -u root -p --databases sam > sam.sql==========taking back up and restoring db
+
+
+
+all:
+shell> mysqldump --all-databases > dump.sql
+
+specific:
+shell> mysqldump --databases db1 db2 db3 > dump.sql
+
+just single:
+shell> mysqldump --databases test > dump.sql
+
+without —databases option:
+shell> mysqldump test > dump.sql
+
+only specific tables from a database:
+shell> mysqldump test t1 t3 t7 > dump.sql
+
+
+scheduling:
+crontab file: `0 0 * * * mysqldump --user=root --password=password --host=localhost --protocol=tcp --port=3306 --default-character-set=utf8 "database_name" > ~/backup/database_name.sql`
+
+restore:
+mysql -u root -p DatabaseName < /backup/daily/testDB/daily_DatabaseName_2015-05-16_00h05m_Saturday.sql.gz
+
+ROOT PASSOWRD REST IN MYSQL
+
+service mysqld stop
+
+mysqld_safe --skip-grant-tables
+
+mysql -u root
+
+use mysql;
+
+update user set password=PASSWORD("redhat1") where User='root';
+
+flush privileges;
+
+exit
+
+##kill all the mysqld processes
+
+service mysqld start
+
+
+
+
+
+LVM 
+
+PE unit of PV
+4mb chuck size
+
+After adding disk 
+
+#dmesg====atlast it will guve the output of newly added disk
+#dmesg or echo "- - -" /sys/class/scsi_host/host<number>/scan
+
+sd 0:0:1:0: Attached scsi generic sg3 type 0
+sd 0:0:1:0: [sdb] 10485760 512-byte logical blocks: (5.36 GB/5.00 GiB)
+sd 0:0:1:0: [sdb] Write Protect is off
+sd 0:0:1:0: [sdb] Mode Sense: 61 00 00 00
+sd 0:0:1:0: [sdb] Cache data unavailable
+sd 0:0:1:0: [sdb] Assuming drive cache: write through
+sd 0:0:1:0: [sdb] Cache data unavailable
+sd 0:0:1:0: [sdb] Assuming drive cache: write through
+
+fdisk /dev/sdb === to create a new partiation in the disk
+m for help n for new  partation p for print d for delet w to write the created disk
+
+Command (m for help): n
+Command action
+   e   extended
+   p   primary partition (1-4)
+p
+Partition number (1-4): 1
+First cylinder (1-652, default 1):
+
+
+   Device Boot      Start         End      Blocks   Id  System
+/dev/sdb1               1          65      522081   83  Linux
+/dev/sdb2              66         130      522112+  83  Linux
+/dev/sdb3             131         195      522112+  83  Linux
+/dev/sdb4             196         221      208845    5  Extended==========extended
+
+Command (m for help):
+
+ mkfs -t ext4 -m 1 /dev/sdb1== to amke file system -m 1 to indicate root space bydefault it will take 5% of the partation space
+mkfs -t ext4 /dev/sdb1======making file system nortaml
+
+
+/dev/sdb1             2.0G   68M  1.9G   4% /m1=======difference between using -m 1 and witout using 
+/dev/sdb2             3.0G   69M  2.9G   3% /m2
+
+ mount /dev/sdb1 /m1====temp mounting
+ mount /dev/sdb2 /m2
+
+parmanent mounting
+
+in /etc/fstab===permanent mounting
+
+sysfs                   /sys                    sysfs   defaults        0 0===first 0 for backup and 2nd 0 for fsck file system check
+proc                    /proc                   proc    defaults        0 0
+[root@localhost /]#
+
+ pvcreate /dev/sdb1
+vgcreate vg01 /dev/sdb1 /dev/sdb2
+lvcreate -L 1G -n lv02 vg01
+mkfs -t ext4 /dev/vg01/lv01
+mkfs -t ext4 -m 1 /dev/vg01/lv02
+
+pvs
+vgs
+lvs
+lvs -o+devices===will show clear output
+
+[root@localhost /]# lvs -o+devices
+  LV   VG   Attr      LSize Pool Origin Data%  Move Log Cpy%Sync Convert Devices
+  lv01 vg01 -wi-ao--- 1.00g                                              /dev/sdb1(0)
+  lv02 vg01 -wi-ao--- 1.00g                                              /dev/sdb1(256)
+[root@localhost /]# pvs
+
+to remove 
+ umount /m1 ---> lvremove--->vgremove---->pvremove
+
+LVMIGRATION
+
+create pv vg lv 
+ echo "- - -" /sys/class/scsi_host/host0/scan
+ pvcreate /dev/sdb
+vgcreate vg01 /dev/sdb
+lvcreate -L +5G -n lv01 vg01
+ mkfs -t ext4 /dev/vg01/lv01
+mkdir /etctmp
+mount  -t ext4 /etctmp /dev/vg01/lv01
+ cp -r /etc /etctmp/
+umount /etctmp
+vgchange -an vg01
+[root@localhost ~]# lvs
+  LV    VG        Attr       LSize  Pool Origin Data%  Meta%  Move Log Cpy%Sync Convert
+  lv_01 root_vg01 -wi-ao---- 19.69g=======ao means active
+  lv01  vg01      -wi-------  5.00g========here inactive
+
+in virtual machine copy the disk file from the machine paste the file on the target host and go to the target host setting
+add new disk with existing file
+
+rescan in the target host
+vgchange -ay
+vgs it will show the disk 
+ mkdir /etctmp
+mount /dev/vg01/lv01 /etctmp/
+
+
+to recover the lost VG  
+
+vgcfgrestore -l vg01
+
+
+  File:         /etc/lvm/archive/vg01_00000-1341448836.vg
+  VG name:      vg01
+  Description:  Created *before* executing 'vgcreate vg01 /dev/sdb'
+  Backup Time:  Fri Aug 31 10:37:10 2018
+
+
+  File:         /etc/lvm/archive/vg01_00001-891426171.vg
+  VG name:      vg01
+  Description:  Created *before* executing 'lvcreate -L +5G -n lv01 vg01'
+  Backup Time:  Fri Aug 31 10:37:42 2018
+
+
+  File:         /etc/lvm/archive/vg01_00002-1327557468.vg
+  VG name:      vg01
+  Description:  Created *before* executing 'lvremove /dev/vg01/lv01'
+  Backup Time:  Fri Aug 31 11:06:04 2018
+
+
+  File:         /etc/lvm/backup/vg01
+  VG name:      vg01
+  Description:  Created *after* executing 'lvremove /dev/vg01/lv01'
+  Backup Time:  Fri Aug 31 11:06:04 2018
+
+[root@localhost ~]# vgcfgrestore vg01 -f /etc/lvm/archive/vg01_00002-1327557468.vg
+  Restored volume group vg01
+[root@localhost ~]# lvs
+  LV    VG        Attr       LSize  Pool Origin Data%  Meta%  Move Log Cpy%Sync Convert
+  lv_01 root_vg01 -wi-ao---- 19.69g
+  lv01  vg01      -wi-------  5.00g
+[root@localhost ~]# vgchange -ay
+  1 logical volume(s) in volume group "vg01" now active
+  1 logical volume(s) in volume group "root_vg01" now active
+[root@localhost ~]# mount -a
+[root@localhost ~]# cd /etctmp/
+[root@localhost etctmp]# ls
+etc  lost+found
+[root@localhost etctmp]#
+
+ vgextend vg01 /dev/sdd========/dev/sdd is newly added disk
+vgreduce vg01 /dev/sdd
+lvextend -L +1G /dev/vg01/lv01 -r==== -r it will resize automatically if we did int give -r then we need to run separate command "resize2fs"
+
+
+lvreduce 
+first umount 
+ umount /etctmp
+e2fsck -f /dev/vg01/lv01========file system integrity check
+resize2fs /dev/vg01/lv01 5G=======file size what we need to be the LV 56(from 6 gb we making it to be 5G)
+ lvreduce -L -1G /dev/vg01/lv01==========then lvreduce
+after reduced mount again 
+
+
+creating snapshot
+ lvcreate -s -n sn2 -L 1G /dev/vg01/lv01======taking snap shot
+removed etc directory from mount mount
+umount before merging
+lvconvert --merge /dev/vg01/sn2=====to recover using snapshot
+lvchange -a n /dev/vg01/lv01-=====inactive and active 
+lvchange -a y /dev/vg01/lv01
+mount again
+
+
+===========================
+
+ ps -ef | grep -i defunct=to check zombine process
+
+in top command press shift+f  to selet the option to disply in the top command
+
+nicece value to increase the priority of the process with the value of +19 to -19 
+press  k in top command to kill the process
+press  r to change the niece valuve increase and decrease the process value -19 will become top most priority and +19 will reduce the priority
+
+sending fore ground to back ground
+
+ dd if=/dev/zero of=/dev/null &===== will run in back ground
+
+cltr + c will terminate 
+
+cltr + z will stop 
+
+[root@localhost ~]# dd if=/dev/zero of=/dev/null
+^Z
+[1]+  Stopped                 dd if=/dev/zero of=/dev/null
+[root@localhost ~]# bg==== will it start the stopped process in back ground
+[1]+ dd if=/dev/zero of=/dev/null &
+[root@localhost ~]#
+
+x=0 ; while true ; do echo $x ; sleep 1 ; x=`expr $x + 1` ; done >>file1 ===it will create continous number and store in aafilee
+
+[root@localhost ~]# ps -AO user,uid,comm,pid,pcpu,tty --sort=-pcpu|head -n 10==========to check top most running process
+   PID USER       UID COMMAND            PID %CPU TT       S TTY          TIME COMMAND
+  8704 root         0 dd                8704 50.1 pts/1    R pts/1    00:01:23 dd if=/dev/zero of=/dev/null
+  8705 root         0 dd                8705 49.3 pts/1    R pts/1    00:01:21 dd if=/dev/zero of=/dev/null
+  2018 root         0 nautilus          2018  0.3 ?        S ?        00:00:21 nautilus
+  1761 root         0 Xorg              1761  0.1 tty1     S tty1     00:00:08 /usr/bin/Xorg :0 -br -verbose -audit 4 -auth /var/run/gdm/auth-for-gdm-h3tVDp/database -nolisten tcp vt1
+  2056 root         0 gnote             2056  0.1 ?        S ?        00:00:09 /usr/bin/gnote --panel-applet --oaf-activate-iid=OAFIID:GnoteApplet_Factory --oaf-ior-fd=19
+  2089 root         0 python            2089  0.1 ?        S ?        00:00:12 python /usr/share/system-config-printer/applet.py
+     1 root         0 init                 1  0.0 ?        S ?        00:00:01 /sbin/init
+     2 root         0 kthreadd             2  0.0 ?        S ?        00:00:00 [kthreadd]
+     3 root         0 migration/0          3  0.0 ?        S ?        00:00:00 [migration/0]
+
+[root@localhost /]# iostat=========================read and write of hard disk
+Linux 2.6.32-504.el6.x86_64 (localhost.localdomain)     09/01/2018      _x86_64_        (1 CPU)
+
+avg-cpu:  %user   %nice %system %iowait  %steal   %idle
+           5.06    0.00   13.80    1.63    0.00   79.51
+
+Device:            tps   Blk_read/s   Blk_wrtn/s   Blk_read   Blk_wrtn
+sda               2.25       124.46        11.63     873802      81666
+sdb               0.04         0.36         0.00       2536          0
+
+[root@localhost /]#
+
+
+dmsetup info sda to chcek which device using more io(hard disk read and right) here sda is the device name use iostat to get those devices name 
+
+
+sysstat=== install the package
+[root@localhost cron.d]# pwd
+/etc/cron.d
+[root@localhost cron.d]# cat sysstat  once we make entry in sysstat cron entry it will silently enable 
+# Run system activity accounting tool every 10 minutes
+*/10 * * * * root /usr/lib64/sa/sa1 1 1
+# 0 * * * * root /usr/lib64/sa/sa1 600 6 &
+# Generate a daily summary of process accounting at 23:53
+53 23 * * * root /usr/lib64/sa/sa2 -A
+
+[root@localhost cron.d]# ls
+0hourly  raid-check  sysstat
+[root@localhost cron.d]#
+
+ sar -P ALL 3 1=====sar to see cpu load for every 3 sec 1
+[root@localhost cron.d]# sar -P ALL 3 1
+Linux 2.6.32-504.el6.x86_64 (localhost.localdomain)     09/01/2018      _x86_64_        (1 CPU)
+
+06:21:18 AM     CPU     %user     %nice   %system   %iowait    %steal     %idle
+06:21:21 AM     all     25.93      0.00     74.07      0.00      0.00      0.00
+06:21:21 AM       0     25.93      0.00     74.07      0.00      0.00      0.00
+
+Average:        CPU     %user     %nice   %system   %iowait    %steal     %idle
+Average:        all     25.93      0.00     74.07      0.00      0.00      0.00
+Average:          0     25.93      0.00     74.07      0.00      0.00      0.00
+
+[root@localhost cron.d]# sar -R=====memory usage
+Linux 2.6.32-504.el6.x86_64 (localhost.localdomain)     09/01/2018      _x86_64_        (1 CPU)
+
+03:32:05 AM       LINUX RESTART
+
+03:40:01 AM   frmpg/s   bufpg/s   campg/s
+03:50:01 AM   -102.10      0.33    100.69
+04:00:01 AM      0.51      0.07      0.00
+04:10:02 AM     -0.26      0.07      0.04
+04:20:01 AM     -0.37      0.08      0.05
+04:30:01 AM     -0.52      0.06      0.00
+04:40:01 AM     -0.03      0.08      0.23
+04:50:01 AM    -25.26     10.58      2.05
+05:00:01 AM     -0.98      0.34      0.35
+05:10:01 AM     -0.24      0.20      0.00
+05:20:01 AM     -0.06      0.09      0.00
+05:30:01 AM     -0.22      0.09      0.03
+
+[root@localhost cron.d]# sar -n DEV=======network devices packet transfer
+Linux 2.6.32-504.el6.x86_64 (localhost.localdomain)     09/01/2018      _x86_64_        (1 CPU)
+
+03:32:05 AM       LINUX RESTART
+
+03:40:01 AM     IFACE   rxpck/s   txpck/s    rxkB/s    txkB/s   rxcmp/s   txcmp/s  rxmcst/s
+03:50:01 AM        lo      0.01      0.01      0.00      0.00      0.00      0.00      0.00
+03:50:01 AM      eth0      0.35      0.14      0.05      0.01      0.00      0.00      0.00
+03:50:01 AM      eth1      2.66      0.32      0.18      0.04      0.00      0.00      0.00
+04:00:01 AM        lo      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+04:00:01 AM      eth0      0.19      0.02      0.01      0.00      0.00      0.00      0.00
+04:00:01 AM      eth1      2.20      0.02      0.13      0.00      0.00      0.00      0.00
+04:10:02 AM        lo      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+04:10:02 AM      eth0      0.18      0.02      0.01      0.00      0.00      0.00      0.00
+04:10:02 AM      eth1      2.08      0.09      0.13      0.01      0.00      0.00      0.00
+04:20:01 AM        lo      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+04:20:01 AM      eth0      0.24      0.00      0.02      0.00      0.00      0.00      0.00
+
+[root@localhost cron.d]# sar -B=====to check block (harddisk)
+
+Linux 2.6.32-504.el6.x86_64 (localhost.localdomain)     09/01/2018      _x86_64_        (1 CPU)
+
+03:32:05 AM       LINUX RESTART
+
+03:40:01 AM  pgpgin/s pgpgout/s   fault/s  majflt/s  pgfree/s pgscank/s pgscand/s pgsteal/s    %vmeff
+03:50:01 AM    398.91     10.72     61.14      0.10     47.23      0.00      0.00      0.00      0.00
+04:00:01 AM      0.00      1.47     12.29      0.00      6.72      0.00      0.00      0.00      0.00
+04:10:02 AM      0.52      1.32     33.69      0.00     22.37      0.00      0.00      0.00      0.00
+04:20:01 AM      0.19      1.30     14.57      0.00      6.95      0.00      0.00      0.00      0.00
+
+[root@localhost cron.d]# sar -d========for devices
+Linux 2.6.32-504.el6.x86_64 (localhost.localdomain)     09/01/2018      _x86_64_        (1 CPU)
+
+03:32:05 AM       LINUX RESTART
+
+03:40:01 AM       DEV       tps  rd_sec/s  wr_sec/s  avgrq-sz  avgqu-sz     await     svctm     %util
+03:50:01 AM    dev8-0      5.60    797.34     21.45    146.19      0.07     11.61     10.33      5.79
+03:50:01 AM   dev8-16      0.01      0.47      0.00     34.00      0.00      0.25      0.25      0.00
+04:00:01 AM    dev8-0      0.20      0.00      2.95     14.98      0.00      2.26      1.60      0.03
+04:00:01 AM   dev8-16      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+04:10:02 AM    dev8-0      0.23      0.41      2.64     13.15      0.00      3.78      3.21      0.07
+04:10:02 AM   dev8-16      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+04:20:01 AM    dev8-0      0.20      0.37      2.61     14.62      0.00      9.99      6.96      0.14
+04:20:01 AM   dev8-16      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+
+[root@localhost cron.d]# sar -S======for swap
+Linux 2.6.32-504.el6.x86_64 (localhost.localdomain)     09/01/2018      _x86_64_        (1 CPU)
+
+03:32:05 AM       LINUX RESTART
+
+03:40:01 AM kbswpfree kbswpused  %swpused  kbswpcad   %swpcad
+03:50:01 AM   2031612         0      0.00         0      0.00
+04:00:01 AM   2031612         0      0.00         0      0.00
+04:10:02 AM   2031612         0      0.00         0      0.00
+04:20:01 AM   2031612         0      0.00         0      0.00
+04:30:01 AM   2031612         0      0.00         0      0.00
+04:40:01 AM   2031612         0      0.00         0      0.00
+04:50:01 AM   2031612         0      0.00         0      0.00
+05:00:01 AM   2031612         0      0.00         0      0.00
+05:10:01 AM   2031612         0      0.00         0      0.00
+
+[root@localhost sa]# sar -f /var/log/sa/sa31
+Linux 2.6.32-504.el6.x86_64 (localhost.localdomain)     08/31/2018      _x86_64_        (1 CPU)
+
+03:20:14 AM       LINUX RESTART
+
+03:30:03 AM     CPU     %user     %nice   %system   %iowait    %steal     %idle
+03:40:02 AM     all      0.57      0.00      0.63      6.54      0.00     92.27
+03:50:01 AM     all      0.28      0.00      0.40      0.07      0.00     99.25
+04:00:01 AM     all      0.01      0.00      0.18      0.01      0.00     99.81
+04:10:01 AM     all      0.12      0.01      0.42      1.12      0.00     98.33
+04:20:02 AM     all      0.01      0.00      0.18      0.02      0.00     99.80
+04:30:01 AM     all      0.01      0.00      0.16      0.01      0.00     99.82
+04:40:01 AM     all      0.00      0.00      0.17      0.01      0.00     99.83
+04:50:01 AM     all      0.00      0.00      0.16      0.01      0.00     99.83
+05:00:01 AM     all      0.00      0.00      0.16      0.01      0.00     99.82
+05:10:01 AM     all      0.01      0.00      0.17      0.01      0.00     99.81
+
+
+[root@localhost cron.d]# cat /proc/partitions=== to check dev related to sar command 
+major minor  #blocks  name
+
+   8        0   20971520 sda
+   8        1     307200 sda1
+   8        2   18631680 sda2
+   8        3    2031616 sda3
+   8       16    6291456 sdb
+[root@localhost cron.d]# sar -d
+Linux 2.6.32-504.el6.x86_64 (localhost.localdomain)     09/01/2018      _x86_64_        (1 CPU)
+
+03:32:05 AM       LINUX RESTART
+
+03:40:01 AM       DEV       tps  rd_sec/s  wr_sec/s  avgrq-sz  avgqu-sz     await     svctm     %util
+03:50:01 AM    dev8-0      5.60    797.34     21.45    146.19      0.07     11.61     10.33      5.79
+03:50:01 AM   dev8-16      0.01      0.47      0.00     34.00      0.00      0.25      0.25      0.00
+04:00:01 AM    dev8-0      0.20      0.00      2.95     14.98      0.00      2.26      1.60      0.03
+04:00:01 AM   dev8-16      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+
+
+dev8-16 it points  8       16    6291456 sdb to sdb
+
+
+==================================================================
+
+rsyslog 
+
+port 514
+
+to gather info about logs
+
+yum install rsyslog
+vi /etc/rsyslog.conf
+
+on server :
+# Provides TCP syslog reception
+$ModLoad imtcp
+$InputTCPServerRun 514
+# specify senders you permit to access
+$AllowedSender TCP, 192.168.1.7, 192.168.1.0/24  ===== 192.168.1.7 server IP  and 192.168.1.0/24 from this range of ips
+
+on client side
+
+uncomment those lines before it will be woth #
+
+# An on-disk queue is created for this action. If the remote host is
+# down, messages are spooled to disk and sent when it is up again.
+$WorkDirectory /var/lib/rsyslog # where to place spool files
+$ActionQueueFileName fwdRule1 # unique name prefix for spool files
+$ActionQueueMaxDiskSpace 1g   # 1gb space limit (use as much as possible)
+$ActionQueueSaveOnShutdown on # save messages to disk on shutdown
+$ActionQueueType LinkedList   # run asynchronously
+$ActionResumeRetryCount -1    # infinite retries if host is down
+#remote host is: name/ip:port, e.g. 192.168.0.1:514, port optional
+*.* @@192.168.1.7:514====================ip of the server 
+# ### end of the forwarding rule ###
+
+
+service rsyslogd start
+check IPtables if it is enabled disable 
+
+# Log all kernel messages to the console.
+# Logging much else clutters up the screen.
+kern.*                                                 /dev/console
+
+# Log anything (except mail) of level info or higher.
+# Don't log private authentication messages!
+*.info;mail.none;authpriv.none;cron.none                /var/log/messages
+
+# The authpriv file has restricted access.
+authpriv.*                                              /var/log/secure
+
+# Log all the mail messages in one place.
+mail.*                                                  -/var/log/maillog
+
+
+# Log cron stuff
+cron.*                                                  /var/log/cron
+
+# Everybody gets emergency messages
+*.emerg                                                 *
+
+# Save news errors of level crit and higher in a special file.
+uucp,news.crit                                          /var/log/spooler
+
+# Save boot messages also to boot.log
+local7.*                                                /var/log/boot.log
+
+logrotator
+
+is used to compress the files under /var/log/
+/var/log is the directory it will collect all the info about about services if /var/log gets filled all the services gets stopped by not sending the logs
+to over come this issue we use log rotate. it will gzip the file(compress) and store the compressed file under same directory 
+for ex /var/log/messages is above 10M it will compress messages with the date.gz 
+
+cd /etc/cron.daily/
+[root@localhost cron.daily]# cat logrotate
+#!/bin/sh
+
+/usr/sbin/logrotate /etc/logrotate.conf >/dev/null 2>&1
+EXITVALUE=$?
+if [ $EXITVALUE != 0 ]; then
+    /usr/bin/logger -t logrotate "ALERT exited abnormally with [$EXITVALUE]"
+fi
+exit 0
+
+vi /etc/logrotate.d/syslog
+
+under this file make entries
+/var/log/cron
+/var/log/maillog
+/var/log/messages
+/var/log/secure
+/var/log/spooler
+{
+        size 1M== once the file size cross 1M it will compress
+        missingok=====
+        notifempty
+        sharedscripts
+        compress
+        postrotate
+        /bin/kill -HUP `cat /var/run/syslogd.pid 2> /dev/null` 2> /dev/null || true
+        endscript
+}
+
+
+cd /etc/cron.daily/
+[root@localhost cron.daily]# cat logrotate
+#!/bin/sh
+
+/usr/sbin/logrotate /etc/logrotate.conf >/dev/null 2>&1
+EXITVALUE=$?
+if [ $EXITVALUE != 0 ]; then
+    /usr/bin/logger -t logrotate "ALERT exited abnormally with [$EXITVALUE]"
+fi
+exit 0
+
+
+cron.daily will be there we can add cron. weekly or cron.monthly under this make logrotate file will entirs(depend on the server)
+
+/usr/sbin/logrotate /etc/logrotate.conf >/dev/null 2>&1====== run logrotatr with the full path
+
+
+======================================================================
+
+DNS port 53
+
+yum install bind-9* 
+yum install bind-utils
+
+/etc/named.conf			Main Configuration File
+ listen-on port 53 { 127.0.0.1; 192.168.1.7; };=======192.168.1.7 system IP
+allow-query     { localhost; 192.168.1.0/24; };=======192.168.1.0/24 IP range allow all network
+
+/etc/named.rfc1912.zones	Zone Configuration File
+
+
+zone "veecube.com" IN {==============veecube.com domain name
+        type master;
+        file "named.forward";===========forward zone
+        allow-update { none; };
+};
+
+zone "1.168.192.in-addr.arpa" IN {===========ip address of firxt 3 range
+        type master;
+        file "named.reverse";=========reverse zone
+        allow-update { none; };
+
+
+/var/named			Zone setup
+cd /var/named
+cp named.localhost named.forward
+ cp named.loopback named.reverse
+chgrp named named.forward
+chgrp named named.reverse
+
+vi named.forward============
+$TTL 1D
+@       IN SOA  veecube.com. mail.veecube.com. (=================@ will be present before remove it and give domain name (veecube.com.) and example just we give by our own(mail.veecube.com)
+                                        0       ; serial
+                                        1D      ; refresh
+                                        1H      ; retry
+                                        1W      ; expire
+                                        3H )    ; minimum
+        NS      veecube.com.======here @ will be preset remove it and give doamin name veecube.com.
+        A       192.168.1.7=========server IP address
+IN      NS      samraj.veecube.com.=========entry we make with fully qualified doamin name
+samraj  IN      A       192.168.1.7========entry we made hostname with server IP
+
+vi named.reverse
+
+$TTL 1D
+@       IN SOA  veecube.com. mail.veecube.com. (=================@ will be present before remove it and give domain name (veecube.com.) and example just we give by our own(mail.veecube.com)
+                                        0       ; serial
+                                        1D      ; refresh
+                                        1H      ; retry
+                                        1W      ; expire
+                                        3H )    ; minimum
+        NS      veecube.com.======here @ will be preset remove it and give doamin name veecube.com.
+        A       192.168.1.7=========server IP address
+7       IN      PTR     samraj.veecube.com.======server IP last number with fqdn
+~
+
+
+service named start
+
+Records:
+--------
+
+NS   name server 
+
+A    Address
+
+PTR  Pointer
+
+Note: please remove AAAA being it is used for IPV6
+
+start the service:
+------------------
+
+systemctl start/enable named      RHEL7
+
+service named start && chkconfig named on  RHEL6
+
+Verify:
+-------
+
+host <hostname>
+
+host <ip>
+
+you can also try the same with :
+
+nslookup <hostname/ip> 
+
+(and)
+ 
+dig -x <hostname/ip>
+
+
+for adding new servers
+
+[root@localhost named]# cat named.reverse
+$TTL 1D
+@       IN SOA  veecube.com. mail.veecube.com. (
+                                        0       ; serial
+                                        1D      ; refresh
+                                        1H      ; retry
+                                        1W      ; expire
+                                        3H )    ; minimum
+        NS      veecube.com.
+        A       192.168.1.7
+7       IN      PTR     samraj.veecube.com.
+26      IN      PTR     centos.veecube.com.===========new server added
+[root@localhost named]# cat named.forward
+$TTL 1D
+@       IN SOA  veecube.com. mail.veecube.com. (
+                                        0       ; serial
+                                        1D      ; refresh
+                                        1H      ; retry
+                                        1W      ; expire
+                                        3H )    ; minimum
+        NS      veecube.com.
+        A       192.168.1.7
+IN      NS      samraj.veecube.com.
+IN      NS      centos.veecube.com.
+IN      NS      master.dns.com.
+samraj  IN      A       192.168.1.7
+centos  IN      A       192.168.1.26
+master  IN      A       192.168.1.80
+[root@localhost named]#
+
+
+
+[root@localhost named]#
+
+
+in client  add the DNS configured server IP  in /etc/resolve.conf
+if we configured in the same server give same server IP in resolve.conf
+
+[root@localhost named]# cat /etc/resolv.conf  remove unwanted entries in resolve.cong networkmanager line
+nameserver 192.168.1.7
+[root@localhost named]#
+
+[root@localhost named]# cat /etc/resolv.conf===client side
+#nameserver 192.168.3.2
+#nameserver 192.168.1.1
+nameserver 192.168.1.7======dns server IP
+[root@localhost named]#
+
+/etc/named.conf
+/etc/named.rfc1912.zones
+cd /var/named
+cp named.localhost named.forward
+ cp named.loopback named.reverse
+chgrp named named.forward
+chgrp named named.reverse
+/etc/resolve.conf
+service NetworkManager stop
+
+doing master and slave config in DNS 
+
+
+========================================
+
+EPEL it will create yum repo which have multiple package
+
+wget https://dl.fedoraproject.org/pub/epel/epel-release-latest-6.noarch.rpm
+rpm -ivh https://dl.fedoraproject.org/pub/epel/epel-release-latest-6.noarch.rpm
+
+ls -l in the current directory
+[root@centos ~]# ls -ltr
+total 120
+-rw-r--r--. 1 root root 14540 Nov  5  2012 epel-release-latest-6.noarch.rpm
+
+yum clean all
+
+yum repolist
+
+[root@centos yum.repos.d]# ls
+CentOS-Base.repo  CentOS-Debuginfo.repo  CentOS-fasttrack.repo  CentOS-Media.repo  CentOS-Vault.repo  epel.repo  epel-testing.repo
+[root@centos yum.repos.d]# we can see epel list
+
+
+========================================
+
+ISCSI===
+
+INSTALL:
+========
+server side
+yum install scsi-target-utils
+
+chkconfig tgtd on
+
+service tgtd start
+
+
+
+vi /etc/tgt/targets.conf
+
+<target iqn.2018-19.com.veecube:samraj.target1>=======iqn year then domain then hostname
+    backing-store /dev/sdb====================disk we export
+    initiator-address 192.168.1.27=======client server ip
+</target>
+
+service tgtd start
+tgt-admin --show======to check the shared disk info and to verify the work doen is correct
+
+CLIENT
+yum install iscsi-initiator-utils
+ iscsiadm -m discovery -t sendtargets -p 192.168.1.27=====discover from the target
+ iscsiadm -m node -T iqn.2018-19.com.veecube:centos.target1 -p 192.168.1.27 --login
+/dev/sdc is the device shared from /dev/sdc
+
+[root@samraj ~]# lsscsi====on client machine lsscsi shows the number of newly added disk 
+[2:0:0:0]    disk    VMware,  VMware Virtual S 1.0   /dev/sda
+[2:0:1:0]    disk    VMware,  VMware Virtual S 1.0   /dev/sdb
+[2:0:2:0]    disk    VMware,  VMware Virtual S 1.0   /dev/sdc
+[2:0:3:0]    disk    VMware,  VMware Virtual S 1.0   /dev/sdd
+[3:0:0:0]    cd/dvd  NECVMWar VMware SATA CD00 1.00  /dev/sr0
+[4:0:0:0]    cd/dvd  NECVMWar VMware SATA CD01 1.00  /dev/sr1
+[33:0:0:0]   storage IET      Controller       0001  -
+[33:0:0:1]   disk    IET      VIRTUAL-DISK     0001  /dev/sde---newly added
+[33:0:0:2]   disk    IET      VIRTUAL-DISK     0001  /dev/sdf---newly added
+
+
+MULTIPATH
+
+by using multipath we can merge two luns as a single, even if one disl fails it will work same like mirroring 
+5gb from one server and 5 gb from other server  we can use only 5 gb 
+
+<target iqn.2018-19.com.veecube:target1> give same name target1
+    backing-store /dev/sde
+    initiator-address 192.168.1.232
+</target>
+
+<target iqn.2018-19.com.veecube:target1> give same name target1 
+    backing-store /dev/sdc
+    initiator-address 192.168.1.232
+</target>
+
+using iscsi discovery login we can use multipath
+
+
+ yum install -y device-mapper-multipath.x86_64 device-mapper-multipath-libs.x86_64
+or yum provide */multipath
+
+service multipathd start
+
+after starting multipath use lsscsi command if the command does not execute install the package and execute
+
+[root@localhost ~]#  lsscsi
+[1:0:0:0]    cd/dvd  NECVMWar VMware IDE CDR10 1.00  /dev/sr0
+[2:0:0:0]    disk    VMware,  VMware Virtual S 1.0   /dev/sda
+[2:0:1:0]    disk    VMware,  VMware Virtual S 1.0   /dev/sdb
+[6:0:0:0]    storage IET      Controller       0001  -
+[6:0:0:1]    disk    IET      VIRTUAL-DISK     0001  /dev/sdc========newly added
+[8:0:0:0]    storage IET      Controller       0001  -
+[8:0:0:1]    disk    IET      VIRTUAL-DISK     0001  /dev/sdd==========newly added
+[root@localhost ~]#
+
+[root@localhost ~]# scsi_id -g /dev/sdd========gives the name
+1IET     00020001
+
+[root@localhost ~]# cat vi /etc/multipath.conf=====config file
+
+defaults {
+        user_friendly_names yes
+}
+blacklist {
+        devnode "^(ram|raw|loop|fd|md|dm-|sr|scd|st|sda|sdb)[0-9]*"
+        devnode "^hd[a-z]"
+}
+multipaths {
+        multipath {
+        wwid            1IET=======here we give the name 
+}
+[root@localhost ~]#
+
+service multipathd restart
+
+[root@localhost ~]# multipath -ll
+mpathc (1IET     00020001) dm-1 IET,VIRTUAL-DISK======mpathc is the disk name now
+size=5.0G features='0' hwhandler='0' wp=rw
+|-+- policy='round-robin 0' prio=0 status=active
+| `- 6:0:0:1 sdc 8:32 failed faulty running
+`-+- policy='round-robin 0' prio=1 status=enabled
+  `- 8:0:0:1 sdd 8:48 active ready running
+[root@localhost ~]#
+
+pvcreate /dev/mapper/mpathc
+vgcreate cg01 /dev/mapper/mpathc
+lvcreate -l 100%FREE -n lv01 cg01
+mkfs -t ext4 -m 1 /dev/cg01/lv01
+ mount /dev/cg01/lv01 /test2
+strace multipath -ll=====will show the error
+
+
+592  dmesg
+  593  blkid
+  594  vgcreate vg01 /dev/sdc
+  595  lvcreate -l 100%FREE -n lv01 vg01
+  596  mkfs.ext4 -m 1 /dev/vg01/lv01
+
+  597  blkid
+  598  mkdir /test
+  599  echo " UUID="0762be22-2e1c-4fb8-9990-d99cc65b77a3" /test  ext4   defaults  0 0" >>/etc/fstab
+  600  mount -a
+  601  df -h
+  602  service iscsid status
+  603  chkconfig iscsid on
+  604  service iscsi status
+  605  chkconfig iscsi on
+
+after reboot also it will exist while we make permanent entry
+follow the setp by setp reverse process to umount and logout iscsi disk refer old document
+
+
+NIS refer old document
+
+
+
+=================================================================================
+
+CRONTAB:
+========
+
+<Minute> <Hour> <Day_of_the_Month> <Month_of_the_Year> <Day_of_the_Week> <Year>
+
+
+* * * * * 
+| | | | |  
+| | | | | 
+| | | | +---- Day of the Week   (range: 0-6, 1 standing for Monday)
+| | | +------ Month of the Year (range: 1-12)
+| | +-------- Day of the Month  (range: 1-31)
+| +---------- Hour              (range: 0-23)
++------------ Minute            (range: 0-59)
+ 
+
+Scheduler: 
+==========
+
+crontab -l to list all the Jobs
+
+crontab -e edit the jobs
+
+crontab -r to remove all the jobs
+
+Name of the service : crond
+
+systemctl status crond
+
+service crond status
+
+try:
+====
+
+crontab -e
+
+*/2 * * * * echo "cron test" #for every two minutes once
+
+0 2 21 3 2019 sh script ### night 2 AM on 21-03-2019
+
+* */2 * * * <script/commond> every two hours once
+
+*/1 * * * * echo "welcome"===every one min
+
+
+/etc/cron.deny:
+===============
+###here place a username i.e, that particular user will  not allowed to run any cron jobs
+
+at schedular:
+=============
+
+at 9:30 PM Tue
+
+at> echo "alarm, it's 9:30 PM on Tuesday."
+
+at > <ctrl-d ^d>
+
+to queue:
+=========
+
+You can use the program atq to view your currently-queued at jobs. Type atq to display the queue.
+
+atq
+
+
+at job if we set at job at 8 pm for ex and machine got shut down on the time it will wait untill that time the job waits once the system came up, it will execute the 8pm command
+
+KDUMP
+we cant do any thing with the file we can capture the reason for the system or os or kernal crash and we need to send that to redhat service
+they can fetch the reason
+
+ /boot/grub/grub.conf
+
+under the file  crashkernel=auto  auto indicates it can take all the space to generate crash logs and it will be stored under /var/crash
+
+ kernel /vmlinuz-2.6.32-504.el6.x86_64 ro root=UUID=d93f2c83-97d1-470f-af54-94ca7f918073 rd_NO_LUKS rd_NO_LVM LANG=en_US.UTF-8 rd_NO_MD SYSFONT=latarcyrheb-sun16 crashkernel=auto  KEYBOARDTYPE=pc KEYTABLE=us rd_NO_DM rhgb quiet
+        initrd /initramfs-2.6.32-504.el6.x86_64.img
+
+
+The until loop:
+==============
+
+The until loop is very similar to the while loop, except that the loop executes until the TEST-COMMAND executes successfully. As long as this command fails, the loop continues. The syntax is the same as for the while loop:
+
+until TEST-COMMAND; do CONSEQUENT-COMMANDS; done
+
+The return status is the exit status of the last command executed in the CONSEQUENT-COMMANDS list, or zero if none was executed. TEST-COMMAND can, again, be any command that can exit with a success or failure status, and CONSEQUENT-COMMANDS can be any UNIX command, script or shell construct.
+
+
+#!/bin/sh
+
+a=0
+
+until [ ! $a -lt 10 ]
+do
+   echo $a
+   a=`expr $a + 1`
+done
+
+
+
+#!/bin/bash
+i=1
+until [ $i -gt 6 ]
+do
+        echo "Welcome $i times."
+        i=$(( i+1 ))
+done
+
+
+#!/bin/bash
+# checking until command
+num=10
+until [ $num –eq o ]
+do
+echo $num
+num=$[$num-1]
+done
+
+
+CURL:
+=====
+
+bydefaults it use http and 
+
+curl is a tool to transfer data from or to a server, using one of the supported protocols (HTTP, HTTPS, FTP, FTPS, SCP, SFTP, TFTP, DICT, TELNET, LDAP or FILE).
+The command is designed to work without user interaction.
+
+Transferring data from one place to another is one of the main task done using computers connected to a network.
+There are so many GUI tools out there to send and receive data, but when you are working on a console, only equipped with command line functionality,
+using curl is inevitable. A less known fact is that curl can work with a wide range of protocols.
+
+CURL is an easy to use command line tool to send and receive files, and it supports almost all major protocols(DICT, FILE, FTP, FTPS, GOPHER, HTTP, HTTPS,  IMAP, IMAPS,  LDAP,  LDAPS,  POP3, POP3S, RTMP, RTSP, SCP, SFTP, SMTP, SMTPS, TELNET and TFTP) in use.
+Can be used inside your shell scripts with ease
+Supports features like pause and resume of downloads
+It has around 120 command line options for various tasks
+It runs on all major operating systems(More than 40+ Operating systems)
+Supports cookies, forms and SSL
+Both curl command line tool and libcurl library are open source, so they can be used in any of your programs
+It supports configuration files
+Multiple upload with a single command
+Progress bar, rate limiting, and download time details
+ipv6 support
+
+Basic CURL command Usage:
+
+For example if you give a URL named ftp.example.com (CURL will use FTP protocol to fetch data).
+But in case curl cannot guess the Protocol, then it will default to HTTP.
+
+root@Centos1:~# curl example.com
+
+root@Centos1:~# curl example.com > example.html
+
+Downloading Multiple Files using single CURL command:
+
+root@Centos1:~# curl -O libiconv-1.14.tar.gz http://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.10.tar.gz -O http://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.12.tar.gz -O http://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.13.tar.gz
+
+HTTP redirection using curl:
+
+root@Centos1:~# curl google.com
+<HTML><HEAD><meta http-equiv="content-type" content="text/html;charset=utf-8">
+<TITLE>301 Moved</TITLE></HEAD><BODY>
+<H1>301 Moved</H1>
+The document has moved
+<A HREF="http://www.google.com/">here</A>.
+</BODY></HTML>
+
+
+Pause/Resume Downloads using Curl Command:
+=========================================
+
+Similar to any GUI download manager, you can pause and resume downloads using CURL.
+This can be achieved using -C option as shown below. Let's first start a download and then cancel it(with CTRL + C).
+
+
+root@Centos1:~# curl -O http://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.14.tar.gz
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0 4867k    0  1196    0     0   1631      0  0:50:56 --:--:--  0:50:56  5363
+
+
+Now let's resume the download...
+
+root@Centos1:~# curl -C - -O http://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.14.tar.gz
+** Resuming transfer from byte position 28672
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0 4839k    0 30339    0     0  21558      0  0:03:49  0:00:01  0:03:48 27185
+
+
+On resuming the transfer, it clearly says that its resuming from byte 28672.
+This is because curl tried to fetch the bytes previously downloaded from the partially saved file libiconv-1.14.tar.gz, in the current directory.
+And on finding the partially downloaded file, it resumed from where it left last time.
+
+Ignore SSL Certificate Error with CURL:
+=======================================
+
+SSL certificates needs to be signed by an authorized certificate authority.
+Otherwise user agents like browser's will warn you and requires a user action like pressing a continue button.
+Normally curl will not continue the connection at all, if it finds an unknown ssl certificate.
+Although its a nice security feature, we do configure internal self signed certificate for our internal servers.
+In such cases, you need to accept the unknown certificate warning and continue with the request.
+This can be done with curl using the -k option as shown below.
+
+curl -k https://10.1.136.101:4848
+
+Download Rate Limit with Curl:
+==============================
+
+curl --limit-rate 100k -O http://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.10
+
+Using CURL for FTP download and Upload:
+=======================================
+
+Download File from FTP server using CURL:
+
+curl ftp://example.com/mydirectory/myfile.zip --user username:password -o myfile.zip
+
+curl ftp://example.com --user username:password
+
+
+Uploading files to FTP server using CURL:
+
+curl -T myfile.zip ftp://example.com/mydirectory/ --user username:password
+
+searching in google with ftp server files exist
+
+create FTP users and /var/ftp chnage group to ftp and add user to ftp group to upload and download files
+
+ curl ftp://192.168.1.7 --user sam:root123  -o awk==========downloDINg
+ curl ftp://192.168.1.7 --user sam:root123  -o test1
+curl -T awk ftp://192.168.1.7 --user sam:root123=========uploading
+
+Deleting files on FTP server:
+=============================
+
+curl ftp://example.com/ -X 'DELE myfile.zip' --user username:password
+
+Sending EMAIL's using CURL:
+===========================
+
+curl --url "smtps://smtp.example.com:465" --ssl-reqd   --mail-from "user@example.com" --mail-rcpt "friend@example.com"   --upload-file mailcontent.txt --user "user@example.com:password" --insecure
+
+
+[root@samraj ~]#
+
+
+chmod g+w /var/ftp -R
+groupadd --gid 20000 ftpup
+usermod -g ftpup sam
+ chgrp ftpup /var/ftp/
+usermod --shell /sbin/nologin -g ftp sam
+
+============================================================================
+
+
+selinux
+
+with seboolan
+
+
+================
+
+IPTABLES
+
+only IP and port we can handle
+
+nating topic to bypass the port
+
+iptables -I INPUT -s 192.168.1.7 -j DROP
+i for input -s for source from out to in
+
+ iptables -I OUTPUT -d 192.168.1.7 -j DROP
+-d destination   from in to out
+
+iptables -A INPUT -s 192.168.1.7  -p tcp --dport 22 -j REJECT
+from source ssh will not work -s from source  -p tcp port --dport 22
+
+iptables -I OUTPUT -d 192.168.1.7 -p tcp --dport 22 -j DROP
+from the server 
+
+iptables -A INPUT -s 192.168.1.8  -p tcp --dport 22 -j DROP
+-A will all rules from the bottom will add newly created rules down of the present rule
+
+iptables -I INPUT 2 -s 192.168.1.116  -p tcp --dport 22 -j DROP
+-I 2 insert in the second line
+
+iptables -A INPUT -p tcp --dport 22 -m state --state NEW -j REJECT=========will drop new connection to the machine with the state 
+
+iptables -n -L -v --line-numbers
+will display the rules with order number
+
+sport and dport depends on the own machine 
+
+iptables -n -L -v --line-numbers==========list with line
+iptables -D OUTPUT 1==================delet first line of the output rule
+iptables -D INPUT  1=======================delet first line of the input rule
+
+================================================================================================
+
+Apache Tomcat is an open-source web server that is designed to serve Java web pages. It is widely deployed and powers various mission-critical web applications around the world.
+
+As a starter guide, this article explains how to install Apache Tomcat 8, the latest stable version of Apache Tomcat, onto a Vultr CentOS 7 server instance.
+
+Prerequisites
+Before further reading, you need to:
+
+Deploy a fresh Vultr CentOS 7 server instance.
+Log into this machine from your SSH terminal as a non-root sudo user.
+Step 1: Update your CentOS system
+First things first, you need to update the system to the latest stable status:
+
+sudo yum install epel-release
+sudo yum update -y && sudo reboot
+Use the same sudo user to log into the system after the reboot finishes.
+
+Step 2: Install Java
+You need to install Java SE 7.0 or later before Apache Tomcat can run properly. Here, I will install OpenJDK Runtime Environment 1.8.0 using YUM:
+
+sudo yum install java-1.8.0-openjdk.x86_64
+Now, you can confirm your installation with:
+
+java -version
+The output will resemble the following:
+
+openjdk version "1.8.0_91"
+OpenJDK Runtime Environment (build 1.8.0_91-b14)
+OpenJDK 64-Bit Server VM (build 25.91-b14, mixed mode)
+Step 3: Create a dedicated user for Apache Tomcat
+For security purposes, you need to create a dedicated non-root user "tomcat" who belongs to the "tomcat" group:
+
+sudo groupadd tomcat
+sudo mkdir /opt/tomcat
+sudo useradd -s /bin/nologin -g tomcat -d /opt/tomcat tomcat
+In this fashion, you created a user "tomcat" who belongs to the group "tomcat". You cannot use this user account to log into the system. The home directory is /opt/tomcat, which is where the Apache Tomcat program will reside.
+
+Step 4: Download and install the latest Apache Tomcat
+You can always find the latest stable version of Apache Tomcat 8 from its official download page, which is 8.0.33 as of writing.
+
+Under the "Binary Distributions" section and then the "Core" list, use the link pointing to the "tar.gz" archive to compose a wget command:
+
+cd ~
+wget http://www-us.apache.org/dist/tomcat/tomcat-8/v8.0.53/bin/apache-tomcat-8.0.53.tar.gz
+sudo tar -zxvf apache-tomcat-8.0.53.tar.gz -C /opt/tomcat --strip-components=1
+Step 5: Setup proper permissions
+Before you can run Apache Tomcat, you need to setup proper permissions for several directories:
+
+cd /opt/tomcat
+sudo chgrp -R tomcat conf
+sudo chmod g+rwx conf
+sudo chmod g+r conf/*
+sudo chown -R tomcat logs/ temp/ webapps/ work/
+
+sudo chgrp -R tomcat bin
+sudo chgrp -R tomcat lib
+sudo chmod g+rwx bin
+sudo chmod g+r bin/*
+Step 6: Setup a Systemd unit file for Apache Tomcat
+As a matter of convenience, you should setup a Systemd unit file for Apache Tomcat:
+
+sudo vi /etc/systemd/system/tomcat.service
+Populate the file with:
+
+[Unit]
+Description=Apache Tomcat Web Application Container
+After=syslog.target network.target
+
+[Service]
+Type=forking
+
+JAVA_HOME=/usr/lib/jvm/jre
+CATALINA_PID=/opt/tomcat/temp/tomcat.pid
+CATALINA_HOME=/opt/tomcat
+CATALINA_BASE=/opt/tomcat
+'CATALINA_OPTS=-Xms512M -Xmx1024M -server -XX:+UseParallelGC'
+'JAVA_OPTS=-Djava.awt.headless=true -Djava.security.egd=file:/dev/./urandom'
+
+ExecStart=/opt/tomcat/bin/startup.sh
+ExecStop=/bin/kill -15 $MAINPID
+
+User=tomcat
+Group=tomcat
+
+[Install]
+WantedBy=multi-user.target
+Save and quit:
+
+:wq
+Step 7: Install haveged, a security-related program
+For security purposes, you should install haveged as well:
+
+sudo yum install haveged
+sudo systemctl start haveged.service
+sudo systemctl enable haveged.service
+Step 8: Start and test Apache Tomcat
+Now, start the Apache Tomcat service and set it run on system boot:
+
+sudo systemctl start tomcat.service
+sudo systemctl enable tomcat.service
+In order to test Apache Tomcat in a web browser, you need to modify the firewall rules:
+
+sudo firewall-cmd --zone=public --permanent --add-port=8080/tcp
+sudo firewall-cmd --reload
+Then, you can test your installation of Apache Tomcat by visiting the following URL from a web browser:
+
+http://[your-Vultr-server-IP]:8080
+If nothing goes wrong, you will see the default Apache Tomcat front page.
+
+Step 9: Configure the Apache Tomcat web management interface
+In order to use the "Manager App" and the "Host manager" in the Apache Tomcat web interface, you need to create an admin user for your Apache Tomcat server:
+
+sudo vi /opt/tomcat/conf/tomcat-users.xml
+Within the </tomcat-users ...>...</tomcat-users> segment, insert a line to define a admin user:
+
+<user username="yourusername" password="yourpassword" roles="manager-gui,admin-gui"/>
+Remember to replace "yourusername" and "yourpassword" with your own ones, the less common the better.
+
+Save and quit:
+
+:wq
+Restart Apache Tomcat to put your modifications into effect:
+
+sudo systemctl restart tomcat.service
+Refresh the Apache Tomcat front page from your web browser. Log in the "Manager App" and the "Host manager" using the credentials you had setup earlier.
+
+The Apache Tomcat setup is complete. You can now use it to deploy your own applications.
+
+
+apache will only only 10000 user at a time so we use tomcat
+port 8080
+
+yum install epel-release===to install addition pack which is not in repo
+yum install java-1.8.0-openjdk.x86_64
+java -version--to chrck version
+wget http://www-us.apache.org/dist/tomcat/tomcat-8/v8.0.53/bin/apache-tomcat-8.0.53.tar.gz
+
+here www-us.apache.org is the mail url there click download http mirrors then tomcat then seletct version then bin and select the package
+tar -zxvf apache-tomcat-8.0.53.tar.gz -C /opt/tomcat --strip-components=1
+ groupadd tomcat
+ mkdir /opt/tomcat
+ useradd -s /bin/nologin -g tomcat -d /opt/tomcat tomcat
+cd /opt/tomcat
+sudo chgrp -R tomcat conf
+sudo chmod g+rwx conf
+sudo chmod g+r conf/*
+sudo chown -R tomcat logs/ temp/ webapps/ work/
+
+sudo chgrp -R tomcat bin
+sudo chgrp -R tomcat lib
+sudo chmod g+rwx bin
+sudo chmod g+r bin/*
+
+vi /etc/systemd/system/tomcat.service====in the file add the content it if after 7 rhel and centos which supports systemd
+Populate the file with:
+
+[Unit]
+Description=Apache Tomcat Web Application Container
+After=syslog.target network.target
+
+[Service]
+Type=forking
+
+JAVA_HOME=/usr/lib/jvm/jre
+CATALINA_PID=/opt/tomcat/temp/tomcat.pid
+CATALINA_HOME=/opt/tomcat
+CATALINA_BASE=/opt/tomcat
+'CATALINA_OPTS=-Xms512M -Xmx1024M -server -XX:+UseParallelGC'
+'JAVA_OPTS=-Djava.awt.headless=true -Djava.security.egd=file:/dev/./urandom'
+
+ExecStart=/opt/tomcat/bin/startup.sh
+ExecStop=/bin/kill -15 $MAINPID
+
+User=tomcat
+Group=tomcat
+
+[Install]
+WantedBy=multi-user.target
+
+sudo yum install haveged
+sudo systemctl start haveged.service
+sudo systemctl enable haveged.service
+Step 8: Start and test Apache Tomcat
+Now, start the Apache Tomcat service and set it run on system boot:
+
+sudo systemctl start tomcat.service
+sudo systemctl enable tomcat.service
+In order to test Apache Tomcat in a web browser, you need to modify the firewall rules:
+
+sudo firewall-cmd --zone=public --permanent --add-port=8080/tcp
+sudo firewall-cmd --reload
+
+check for firewall selinux and in browswe 192.168.1.27:8080 if we configured correctly it will show the url page
+http://mirrors.fibergrid.in/apache/tomcat/tomcat-8/v8.0.53/src/apache-tomcat-8.0.53-src.tar.gz 
+
+
+JAVA_HOME=/usr/lib/jvm/jre
+CATALINA_PID=/opt/tomcat/temp/tomcat.pid
+CATALINA_HOME=/opt/tomcat
+CATALINA_BASE=/opt/tomcat
+CATALINA_OPTS='-Xms512M -Xmx1024M -server -XX:+UseParallelGC'
+JAVA_OPTS='-Djava.awt.headless=true -Djava.security.egd=file:/dev/./urandom'
+
+Using CATALINA_BASE:   /opt/tomcat
+Using CATALINA_HOME:   /opt/tomcat
+Using CATALINA_TMPDIR: /opt/tomcat/temp
+Using JRE_HOME:        /usr
+Using CLASSPATH:       /opt/tomcat/bin/bootstrap.jar:/opt/tomcat/bin/tomcat-juli.jar
+
+
+
+  
+
+ 

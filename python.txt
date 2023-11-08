@@ -1,0 +1,7 @@
+creating a python file on the server, using the .py file extension
+
+C:\Users\Your Name>python myfile.py
+
+print ("hi sam")
+
+output it print hi sam 
